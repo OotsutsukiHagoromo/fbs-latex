@@ -121,7 +121,6 @@
 % Контейнеры для текста в виде команд и массивов. Инициализация пустой строкой:
 
 \newcommand*{\fb@TitleBox}{}
-\newcommand*{\fb@TitleBox@header}{}
 \newcommand*{\fb@FicLinkBox}{}
 %
 \newarray\fb@AuthorsBox
@@ -158,8 +157,62 @@
 {%
 	% \renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}%
 	\renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}%
-	\renewcommand{\cftaftertoctitle}{\hfill\rule{0pt}{0pt}\thispagestyle{empty}\pagestyle{empty}}%
+	\renewcommand{\cftaftertoctitle}{%
+		\hfill\rule{0pt}{0pt}%
+		\thispagestyle{empty}%
+		\fb@settocheadings
+	}%
 	\setlength{\cftbeforetoctitleskip}{0pt}%
+}
+%
+\newcommand*{\fb@settocheadings}
+{%
+	\ignorespaces%
+	\pagestyle{myheadings}%
+	%
+	\makeatletter%
+	\renewcommand*{\@oddhead}%	Односторонняя печать
+	{%
+		\raisebox{0pt}[\headheight][0pt]%	Начало блока
+		{%
+			\vbox%
+			{%
+				\hbox to \textwidth%
+				{%
+					\normalfont%
+					\strut%
+					\scshape
+					Оглавление
+					\normalfont%
+				}%
+				\hrule%
+			}%
+		}%
+	}%
+	%
+	\renewcommand*{\@evenhead}%	Двусторонняя печать
+	{%
+		\raisebox{0pt}[\headheight][0pt]%	Начало блока
+		{%
+			\vbox%
+			{%
+				\hbox to \textwidth%
+				{%
+					\if@fb@existsSecondSection@
+						\normalfont\strut\scshape
+						Оглавление%
+						\normalfont\hfil\thepage\normalfont%
+					\else
+						\normalfont\strut\thepage\hfil\scshape
+						Оглавление%
+						\normalfont%
+					\fi
+				}%
+				\hrule
+			}%
+		}%
+	}%
+	\makeatother%
 }
 %
 % Колонтитулы
@@ -181,7 +234,7 @@
 						\normalfont\strut\thepage\hfil\slshape\leftmark\normalfont%
 					\else
 					%	\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
-						\normalfont\strut\scshape\fb@TitleBox@header\normalfont\hfil\thepage\normalfont%
+						\normalfont\strut\scshape\fb@TitleBox\normalfont\hfil\thepage\normalfont%
 					\fi
 					%\normalfont\strut\slshape\rightmark\normalfont\hfil\thepage%
 				}%
@@ -199,9 +252,9 @@
 				\hbox to \textwidth%
 				{%
 					\if@fb@existsSecondSection@
-						\normalfont\strut\scshape\fb@TitleBox@header\normalfont\hfil\thepage\normalfont%
+						\normalfont\strut\scshape\fb@TitleBox\normalfont\hfil\thepage\normalfont%
 					\else
-						\normalfont\strut\thepage\hfil\scshape\fb@TitleBox@header\normalfont%
+						\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
 					\fi
 				}%
 				\hrule
@@ -298,16 +351,8 @@
 % ==============================================================================
 
 %	\fbtitle{Название фанфика}
-\providecommand*{\fbtitle}[3][]%
-{%
-	\ifthenelse{\equal{#1}{}}{%
-		\renewcommand*{\fb@TitleBox@header}{#2}%
-	}{%
-		\renewcommand*{\fb@TitleBox@header}{#1}%
-	}
-	\renewcommand*{\fb@TitleBox}{#2}%
-	\renewcommand*{\fb@FicLinkBox}{#3}%
-}
+\providecommand*{\fbtitle}[2]
+{\renewcommand*{\fb@TitleBox}{#1}\renewcommand*{\fb@FicLinkBox}{#2}}
 
 % \fbauthors{Имя автора(-ов) (c URL-адресами на их страницы)
 \providecommand*{\fbauthors}[2]
@@ -559,15 +604,15 @@
 
 	\clearpage%
 	\makeatletter%
-%	\fb@setpagestyle%
-%	\if@fb@firstCompilation@
-%		\fb@maketoc
-%	\fi
-%	\if@fb@existsSecondSection@
-		% Оглавление
-%		\fb@maketoc
-%	\fi
-	\fb@maketoc
+	\fb@setpagestyle%
+	\if@fb@firstCompilation@
+		\fb@maketoc
+	\fi
+	\if@fb@existsSecondSection@
+ 	% Оглавление
+		\fb@maketoc
+	\fi
+%	\fb@maketoc
 	\fb@setpagestyle%
 	\makeatother%	
 	\setcounter{page}{1}%
@@ -581,6 +626,9 @@
 	\mao
 	\tableofcontents
 	\clearpage
+	\mal
+	\fb@setpagestyle
+	\mao
 }
 
 \newcommand*{\fbepauthorbox}{}
