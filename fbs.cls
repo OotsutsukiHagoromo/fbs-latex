@@ -672,7 +672,7 @@
 
 \newlength{\fbs@preprint@length}
 
-% \hangindent — втяжка
+% Устанавливает значение \hangindent — втяжки абзаца
 \newcommand*{\fbs@preprint}[2][1.5cm]%
 {%
 	\mal%
@@ -704,7 +704,8 @@
 	\mao%
 }
 
-\newcommand*{\fbs@PrintItem}[2][, ]%	{Имя массива без '\'}[разделитель]
+% \fbs@PrintItem[разделитель]{Имя массива без '\'}
+\newcommand*{\fbs@PrintItem}[2][, ]%
 {%
 	\ignorespaces%
 	\mal%
@@ -715,6 +716,8 @@
 	%
 	\newcounter{\fbs@PrintItem@cnt}%
 	\setcounter{\fbs@PrintItem@cnt}{1}%
+	% Проверяем, не пуст ли элемент с номером имя_массиваi.
+	% Результат проверки заносится в переменную с именем emptydata.
 	\fbs@PrintItem@check(\the\value{\fbs@PrintItem@cnt})%
 	\whiledo{\not\boolean{emptydata}}%
 	{%
