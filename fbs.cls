@@ -295,6 +295,8 @@
 \definecolor{CornellRed}  {HTML}{bd1e1e}
 \definecolor{CaribbeanCurrent}{HTML}{3C6E71}
 
+% https://coolors.co/eaebed-420039-d72638-ff570a-007090
+
 \colorlet{myurlcolor}{PennBlue}
 \colorlet{mylinkcolor}{PennBlue}
 \colorlet{myredactwrong}{CornellRed}
