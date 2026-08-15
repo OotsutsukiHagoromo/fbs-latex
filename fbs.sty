@@ -15,7 +15,7 @@
 %\DeclareOptionX{encoding}[utf8]{\renewcommand*{\fb@encoding}{#1}}
 %\ProcessOptionsX
 
-\RequirePackage[T1,T2A]{fontenc}
+\RequirePackage[T2A,T1]{fontenc}
 \RequirePackage[utf8]{inputenc}
 \inputencoding{utf8}
 
@@ -52,29 +52,29 @@
 
 \RequirePackage{geometry}
 %\geometry{top = 3cm, bottom = 2.5cm , left = 2.5cm, right = 2.5cm}
-\geometry{margin = 0.95in, top = 1in}
-\geometry{%
-	%bottom = 0.55in,
-	bottom = 1.0in,
-	top = 1.0in,
-	left = 0.77in,
-	right = 0.77in,
-}
-% a5
-\geometry{%
-	%bottom = 0.55in,
-	bottom = 1.0in,
-	top = 1.0in,
-	left = 0.70in,
-	right = 0.70in,
-}
-\geometry{%
-	%bottom = 0.55in,
-	bottom = 1.0in,
-	top = 1.0in,
-	left = 0.60in,
-	right = 0.60in,
-}
+%% \geometry{margin = 0.95in, top = 1in}
+%% \geometry{%
+%% 	%bottom = 0.55in,
+%% 	bottom = 1.0in,
+%% 	top = 1.0in,
+%% 	left = 0.77in,
+%% 	right = 0.77in,
+%% }
+%% % a5
+%% \geometry{%
+%% 	%bottom = 0.55in,
+%% 	bottom = 1.0in,
+%% 	top = 1.0in,
+%% 	left = 0.70in,
+%% 	right = 0.70in,
+%% }
+%% \geometry{%
+%% 	%bottom = 0.55in,
+%% 	bottom = 1.0in,
+%% 	top = 1.0in,
+%% 	left = 0.60in,
+%% 	right = 0.60in,
+%% }
 
 \geometry{%
 	a5paper,
@@ -100,7 +100,8 @@
 %%% \renewcommand*{\rmdefault}{ftm}
 
 %\RequirePackage[libertine, varbb, varg, nosc]{newtx}
-\RequirePackage[libertine, varbb, varg]{newtx}
+% \RequirePackage[libertine, varbb, varg]{newtx}
+\RequirePackage[libertinus, varbb, varg]{newtx}
 \AtBeginDocument{%
   \DeclareFontFamilySubstitution{T2A}{\scdefault}{Tempora-TLF}%
 }
@@ -196,7 +197,9 @@
 	factor=1000
 ]{microtype}
 
-\RequirePackage{enumerate}
+% \RequirePackage{enumitem}
+% \RequirePackage{enumerate}
+\RequirePackage[shortlabels]{enumitem}
 
 % =============================================================================
 
@@ -205,6 +208,9 @@
 
 \newcommand*{\mal}{\makeatletter}
 \newcommand*{\mao}{\makeatother}
+
+\newif\iffb@debugmode
+\fb@debugmodefalse
 
 \newlength{\fb@indent}{\value{parindent}}		% Отступ параграфа по умолчанию.
 
@@ -232,6 +238,7 @@
 \newcommand*{\fb@TitleBox}{}
 \newcommand*{\fb@TitleKolontitulBox}{}
 \newcommand*{\fb@FicLinkBox}{}
+\newcommand*{\fb@TitleFootnoteBox}{}
 %
 \newarray\fb@AuthorsBox
 \newarray\fb@AuthorsLinkBox
@@ -239,12 +246,17 @@
 \newarray\fb@TranslatorsLinkBox
 \newarray\fb@BetasBox
 \newarray\fb@BetasLinkBox
+\newarray\fb@GammasBox
+\newarray\fb@GammasLinkBox
 \newarray\fb@PairingBox
 \newarray\fb@FandomBox
 \newarray\fb@CharactersBox
 \newarray\fb@RatingBox
 \newarray\fb@GenresBox
 \newarray\fb@WarningsBox
+%
+\newarray\fb@MarksBox
+\newarray\fb@MarksBox
 %
 \newcommand*{\fb@SizeBox}{}
 \newcommand*{\fb@PartsNumBox}{}
@@ -254,6 +266,141 @@
 \newcommand{\fb@DedicationBox}{}
 \newcommand{\fb@PublicationBox}{}
 \newcommand{\fb@AuthorsCommentsBox}{}
+%
+\newcommand{\fb@AuthorsNotesBox}{}
+\newcommand{\fb@SummaryBox}{}
+\newcommand{\fb@DirectionBox}{}
+
+
+% ==============================================================================
+% Названия полей
+
+\mal
+
+\newif\iffbenglish
+\newif\iffbrussian
+
+\newcommand*{\fb@makeBoxName}[3]{%
+	\let\fb@tempname=\undefined
+	\let\fb@tempval=\undefined
+	\gdef\fb@tempname{\csname #1\endcsname}
+	\newcommand{\fb@tempval}{%
+		\iffbrussian
+			#2%
+		\else
+			\iffbenglish
+				#3%
+			\fi
+		\fi
+	}%
+	\iffb@debugmode
+		\begingroup
+			\sffamily
+			\begin{align*}
+				\text{fb@tempname} &=%
+				\text{%
+					\expandafter
+					\expandafter
+					\expandafter
+					\string\fb@tempname
+				}
+				\\
+				\text{%
+					fb@tempval%
+				} &=
+				\text{%
+					\fb@tempval
+				}
+			\end{align*}
+		\endgroup
+	\fi
+	% \iffb@debugmode
+	% 	\begingroup
+	% 		\par
+	% 		\sfshape
+	% 		fb@tempname=%
+	% 			\expandafter
+	% 			\expandafter
+	% 			\expandafter
+	% 			\string\fb@tempname
+	% 			\par
+	% 		fb@tempval=\fb@tempval\par
+	% 	\endgroup
+	% \fi
+}
+
+\fb@makeBoxName{fb@AuthorsBoxSingle}{Автор}{Author}
+\fb@makeBoxName{fb@AuthorsBoxPlural}{Авторы}{Authors}
+%
+\fb@makeBoxName{fb@AuthorsBoxSingle}{Автор}{Author}
+\fb@makeBoxName{fb@AuthorsBoxPlural}{Авторы}{Authors}
+
+\mao
+
+% ==============================================================================
+
+\newcommand*{\fbClearFields}{%
+	\begingroup
+	\ignorespaces
+	\mal
+	%
+	\renewcommand*{\fb@TitleBox}{}
+	\renewcommand*{\fb@TitleKolontitulBox}{}
+	\renewcommand*{\fb@FicLinkBox}{}
+	\renewcommand*{\fb@TitleFootnoteBox}{}
+	%
+	\delarray\fb@AuthorsBox
+	\newarray\fb@AuthorsBox
+	\delarray\fb@AuthorsLinkBox
+	\newarray\fb@AuthorsLinkBox
+	\delarray\fb@TranslatorsBox
+	\newarray\fb@TranslatorsBox
+	\delarray\fb@TranslatorsLinkBox
+	\newarray\fb@TranslatorsLinkBox
+	\delarray\fb@BetasBox
+	\newarray\fb@BetasBox
+	\delarray\fb@BetasLinkBox
+	\newarray\fb@BetasLinkBox
+	\delarray\fb@GammasBox
+	\newarray\fb@GammasBox
+	\delarray\fb@GammasLinkBox
+	\newarray\fb@GammasLinkBox
+	\delarray\fb@PairingBox
+	\newarray\fb@PairingBox
+	\delarray\fb@FandomBox
+	\newarray\fb@FandomBox
+	\delarray\fb@CharactersBox
+	\newarray\fb@CharactersBox
+	\delarray\fb@RatingBox
+	\newarray\fb@RatingBox
+	\delarray\fb@GenresBox
+	\newarray\fb@GenresBox
+	\delarray\fb@WarningsBox
+	\newarray\fb@WarningsBox
+	%
+	\delarray\fb@MarksBox
+	\newarray\fb@MarksBox
+	\delarray\fb@MarksBox
+	\newarray\fb@MarksBox
+	%
+	\renewcommand*{\fb@SizeBox}{}
+	\renewcommand*{\fb@PartsNumBox}{}
+	\renewcommand*{\fb@StatusBox}{}
+	%
+	\renewcommand{\fb@DescriptionBox}{}
+	\renewcommand{\fb@DedicationBox}{}
+	\renewcommand{\fb@PublicationBox}{}
+	\renewcommand{\fb@AuthorsCommentsBox}{}
+	%
+	\renewcommand{\fb@AuthorsNotesBox}{}
+	\renewcommand{\fb@SummaryBox}{}
+	\renewcommand{\fb@DirectionBox}{}
+	%
+	\setcounter{fb@TotSections@cnt}{0}
+	%
+	\mao
+	\endgroup
+}
 
 % ==============================================================================
 
@@ -440,7 +587,9 @@
 		\fi
 		\stepcounter{\fb@PrintItem@count}%
 		\fb@PrintItem@ArrayNames@check(\the\value{\fb@PrintItem@count})%
-		\ifemptydata\else #1 \fi
+		\ifemptydata\else
+			#1%
+		\fi
 	}%
 	%
 	\makeatother%	
@@ -460,6 +609,13 @@
 	\renewcommand*{\fb@FicLinkBox}{#3}%
 }
 
+%	\fbtitlefnt{Название фанфика}{Сноска}
+\providecommand{\fbtitlefnt}[4][]%
+{%
+	\fbtitle[#1]{#2}{#3}%
+	\renewcommand*{\fb@TitleFootnoteBox}{#4}%
+}
+
 % \fbauthors{Имя автора(-ов) (c URL-адресами на их страницы)
 \providecommand*{\fbauthors}[2]
 {\readarray{fb@AuthorsBox}{#1}\readarray{fb@AuthorsLinkBox}{#2}}		
@@ -468,9 +624,13 @@
 \providecommand*{\fbtranslators}[2]
 {\readarray{fb@TranslatorsBox}{#1}\readarray{fb@TranslatorsLinkBox}{#2}}
 
-%\fbtranslators{Беты}
+%\fbbetas{Беты}
 \providecommand*{\fbbetas}[2]
 {\readarray{fb@BetasBox}{#1}\readarray{fb@BetasLinkBox}{#2}}
+
+%\fbgammas{Гаммы}
+\providecommand*{\fbgammas}[2]
+{\readarray{fb@GammasBox}{#1}\readarray{fb@GammasLinkBox}{#2}}
 
 % \fbfandom{фэндом(-ы)}
 \providecommand*{\fbfandom}[1]
@@ -496,19 +656,23 @@
 \providecommand*{\fbwarnings}[1]
 {\readarray{fb@WarningsBox}{#1}}
 
+% \fbwarnings{Метки}
+\providecommand*{\fbmarks}[1]
+{\readarray{fb@MarksBox}{#1}}
+
 % Подсчёт страниц
 \newarray\fb@PageSuffix%
 \readarray{fb@PageSuffix}{&а&ы&ы&ы&&&&&&&&&&&&&&&&}%
 
 \providecommand*{\fbsize}[1]%
 {%
-	\makeatletter% 
+	\makeatletter
 	\renewcommand*{\fb@SizeBox}%
 	{%
-		\makeatletter%
+		\makeatletter
 		\@ifundefined{fb@TotPages@getNum}{}%
 		{%
-			\MODULO{\fb@TotPages@getNum}{10}{\fb@TotPages@temp}
+			\MODULO{\fb@TotPages@getNum}{10}{\fb@TotPages@temp}%
 			\ifnum \fb@TotPages@getNum>9
 				\ifnum \fb@TotPages@getNum<20
 					\let\fb@TotPages@temp=\fb@TotPages@getNum
@@ -518,23 +682,27 @@
 			\ADD{\fb@TotPages@temp}{1}{\fb@TotPages@temp}%
 			\fb@PageSuffix(\fb@TotPages@temp)%
 		}%
-		\makeatother%
+		\makeatother
 	}%
-	\makeatother%
+	\makeatother
 }
 
 \renewcommand*{\fb@PartsNumBox}%
 {%
-	\makeatletter%
+	\makeatletter
 	\@ifundefined{fb@TotSections@getNum}{}%
 	{%
-		\makeatletter%
-		\if@fb@existsSecondSection@ \fb@TotSections@getNum \else 1 \fi
+		\makeatletter
+		\if@fb@existsSecondSection@
+			\fb@TotSections@getNum
+		\else
+			1%
+		\fi
 	%	\ifnum \fb@TotSections@getNum=0 1 \else \fb@TotSections@getNum \fi%
-		\makeatother%
+		\makeatother
 	}%
-	\makeatother%
-}
+	\makeatother
+}%
 
 %% У команды \fbstatus есть один аргумент --- целое число:
 %% 1 --- в процессе;
@@ -567,20 +735,36 @@
 }
 
 % \fbdescription{Описание}
-\providecommand{\fbdescription}[1]
+\providecommand{\fbdescription}[1]%
 {\renewcommand{\fb@DescriptionBox}{#1}}
 
 % \fbdedication{Посвящение}
-\providecommand{\fbdedication}[1]
+\providecommand{\fbdedication}[1]%
 {\renewcommand{\fb@DedicationBox}{#1}}
 
 % \fbpublication{Публикация на других ресурсах}
-\providecommand{\fbpublication}[1]
+\providecommand{\fbpublication}[1]%
 {\renewcommand{\fb@PublicationBox}{#1}}
 
 % \fbauthorsComments{Комментарии автора}
-\providecommand{\fbauthorscomments}[1]
+\providecommand{\fbauthorscomments}[1]%
 {\renewcommand{\fb@AuthorsCommentsBox}{#1}}
+
+% \fbauthorsnotes{Author's Notes}
+\providecommand{\fbauthorsnotes}[1]%
+{\renewcommand{\fb@AuthorsNotesBox}{#1}}
+
+% \fbnotes{Notes}
+\providecommand{\fbnotes}[1]%
+{\fbauthorsnotes{#1}}
+
+% \fbsummary{Summary}
+\providecommand{\fbsummary}[1]%
+{\renewcommand{\fb@SummaryBox}{#1}}
+
+% \fbdirection{Направленность}
+\providecommand*{\fbdirection}[1]%
+{\renewcommand{\fb@DirectionBox}{#1}}
 
 % ==============================================
 
@@ -604,12 +788,15 @@
 	%\hspace*{\parindent}%
 	%\section*{#2}%
 	\par\noindent
-	{\LARGE\bfseries
+	{%
+		\LARGE
+		\bfseries
 		%\flushleft
 		\hyphenpenalty=10000%
 		\rule{0pt}{0pt}%
 		\hspace{1\parindent}%
-		#2\par
+		#2%
+		\par
 	}%
 	%\bigskip
 	\addvspace{1\baselineskip}%
@@ -657,6 +844,12 @@
 	%\begin{center}
 		\bfseries%
 		\huge\fb@TitleBox%
+		\ifthenelse{\equal{\fb@TitleFootnoteBox}{}}{}%
+		{%
+			\footnote{%
+				\fb@TitleFootnoteBox\par
+			}%
+		}%
 		\ifthenelse{\equal{\fb@FicLinkBox}{}}{}%
 		{%
 			\par
@@ -674,7 +867,7 @@
 	\vspace{30pt}%
 	%
 	%
-	\fb@CustomItem{fb@AuthorsBox}{Автор}{Авторы}%
+	\fb@CustomItem{fb@AuthorsBox}{\fb@AuthorsBoxSingle}{\fb@AuthorsBoxPlural}%
 	\fb@PrintItemTwo[\\]{fb@AuthorsBox}{fb@AuthorsLinkBox}
 
 	\fb@CustomItem{fb@TranslatorsBox}{Переводчик}{Переводчики}%
@@ -682,6 +875,9 @@
 
 	\fb@CustomItem{fb@BetasBox}{Бета}{Беты}%
 	\fb@PrintItemTwo{fb@BetasBox}{fb@BetasLinkBox}
+
+	\fb@CustomItem{fb@GammasBox}{Гамма}{Гаммы}%
+	\fb@PrintItemTwo{fb@GammasBox}{fb@GammasLinkBox}
 	
 	\fb@CustomItem{fb@FandomBox}{Фэндом}{Фэндомы}%
 	\fb@PrintItem{fb@FandomBox}%
@@ -714,6 +910,14 @@
 
 	%\ifthenelse{\equal{\St@usBox}{}}{}%
 	{\noindent\textbf{Статус: \fb@StatusBox}\par}
+
+	\ifthenelse{\equal{\fb@DirectionBox}{}}{}%
+	{%
+		\noindent
+		\textbf{Direction:}
+		\fb@DirectionBox%
+		\par
+	}%
 		
 	\ifthenelse{\equal{\fb@DescriptionBox}{}}{}%
 	{\medskip\noindent\textbf{Описание:}%
@@ -738,6 +942,18 @@
 	\par%
 	\addpenalty{10000}%
 	\fb@AuthorsCommentsBox\par}
+
+	\ifthenelse{\equal{\fb@AuthorsNotesBox}{}}{}%
+	{\medskip\noindent\textbf{Author's Notes:}%
+	\par%
+	\addpenalty{10000}%
+	\fb@AuthorsNotesBox\par}
+
+	\ifthenelse{\equal{\fb@SummaryBox}{}}{}%
+	{\medskip\noindent\textbf{Summary:}%
+	\par%
+	\addpenalty{10000}%
+	\fb@SummaryBox\par}
 
 	\clearpage%
 	\makeatletter%
@@ -1007,6 +1223,7 @@
 	% 	\fuzzy
 
 	% \sloppy
+	\fbrussian
 }
 
 \AtEndDocument%
@@ -1041,6 +1258,7 @@
 	\par%
 	\addvspace{0.79\baselineskip}%
 }%
+\let\where=\when
 
 \newcounter{commentcounter}
 \setcounter{commentcounter}{0}
