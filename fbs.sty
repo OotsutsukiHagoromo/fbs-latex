@@ -1,8 +1,10 @@
-%%	Стилевой пакет LaTeX, разработанный для конвертирования фанфиков с сайта ficbook.net в формат pdf.
+%%	Стилевой пакет LaTeX, разработанный для конвертирования фанфиков
+%%	с сайта ficbook.net в формат pdf.
 %%	
 %%	(c) Rikudo_Sannin, 2016--2017
 
 \NeedsTeXFormat{LaTeX2e}
+
 \ProvidesPackage{fbs}
 
 \global\makeatletter
@@ -42,20 +44,19 @@
 %\geometry{top = 3cm, bottom = 2.5cm , left = 2.5cm, right = 2.5cm}
 \geometry{margin = 0.95in, top = 1in}
 
-%\RequirePackage{pscyr}
+\RequirePackage{pscyr}
 %\renewcommand*{\rmdefault}{fha}
 %\renewcommand*{\rmdefault}{fsv}
-
 %\renewcommand*{\rmdefault}{flz}
-%\renewcommand*{\rmdefault}{fjn}
-
+\renewcommand*{\rmdefault}{fjn}
 
 \RequirePackage{arrayjob} % Массивы
 \RequirePackage{multido}  % Циклы
 
 \RequirePackage{color}
 
-\definecolor{toclinkcolor}{rgb}{1,0.41,0.13}%{0.92,0.5,0.4}%%{rgb}%{0.74,0.024,1.0}%{0.74,0.024,0.92}
+%\definecolor{toclinkcolor}{rgb}{1,0.41,0.13}%{0.92,0.5,0.4}%%{rgb}%{0.74,0.024,1.0}%{0.74,0.024,0.92}
+\definecolor{toclinkcolor}{rgb}{0.58,0,0.82}
 \definecolor{urllinkcolor}{rgb}{0,0,1}
 
 \RequirePackage{hyperref}	% Для ссылок
@@ -74,7 +75,7 @@
 %	pageanchor=true%
 }
 
-\usepackage{tocloft}
+\RequirePackage{tocloft}
 
 
 % =============================================================================
@@ -85,18 +86,27 @@
 \newcommand*{\mal}{\makeatletter}
 \newcommand*{\mao}{\makeatother}
 
-\newlength{\fb@indent}{\value{parindent}}
+\newlength{\fb@indent}{\value{parindent}}		% Отступ параграфа по умолчанию.
 
-\newif\if@fb@existsSecondSection@
-\@fb@existsSecondSection@false		% Инициализация значением false
+\newif\if@fb@existsSecondSection@		% Создание нового условия: «существует ли
+																		% вторая часть?»
+\@fb@existsSecondSection@false			% Инициализация значением false
 
-\newif\if@fb@firstCompilation@
-\@fb@existsSecondSection@true		% Инициализация значением true
+\newif\if@fb@firstCompilation@			% Первая ли компиляция? (Важно для
+																		% корректной генерации оглавления,
+																		% колонтитулов и номеров страниц.
+\@fb@existsSecondSection@true				% Инициализация значением true
 
+% !..
 \newcommand*{\edots}{\mbox{\mbox{\hphantom{\ensuremath{\ldotp}}!}\ensuremath{\ldotp\ldotp}}}
-\newcommand*{\qdots}{\mbox{\mbox{\hphantom{\ensuremath{\ldotp}}?}\ensuremath{\ldotp\ldotp}}}
-\newcommand*{\qedot}{\mbox{\mbox{\hphantom{\ensuremath{\ldotp}}?}\mbox{\hphantom{\ensuremath{\ldotp}}!}\ensuremath{\ldotp}}}
 
+% ?..
+\newcommand*{\qdots}{\mbox{\mbox{\hphantom{\ensuremath{\ldotp}}?}\ensuremath{\ldotp\ldotp}}}
+
+% ?!
+ \newcommand*{\qedot}{\mbox{\mbox{\hphantom{\ensuremath{\ldotp}}?}\mbox{\hphantom{\ensuremath{\ldotp}}!}\ensuremath{\ldotp}}}
+
+% ==============================================================================
 % Контейнеры для текста в виде команд и массивов. Инициализация пустой строкой:
 
 \newcommand*{\fb@TitleBox}{}
@@ -124,18 +134,25 @@
 \newcommand{\fb@PublicationBox}{}
 \newcommand{\fb@AuthorsCommentsBox}{}
 
-%% Подсчёт количества страниц и частей
+% ==============================================================================
+
+% Подсчёт количества страниц и частей
 	\newcounter{fb@TotSections@cnt}
 	\setcounter{fb@TotSections@cnt}{0}
 
+% ==============================================================================
+% Оглавление
+\newcommand*{\fb@settocpagestyle}
+{%
+	% \renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}%
+	\renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}%
+	\renewcommand{\cftaftertoctitle}{\hfill\rule{0pt}{0pt}\thispagestyle{empty}\pagestyle{empty}}%
+	\setlength{\cftbeforetoctitleskip}{0pt}%
+}
+%
 % Колонтитулы
 \newcommand*{\fb@setpagestyle}
 {%
-	% Оглавление
-	\renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}%
-	\renewcommand{\cftaftertoctitle}{\hfill\rule{0pt}{0pt}\thispagestyle{empty}}%
-	\setlength{\cftbeforetoctitleskip}{0pt}%
-	%
 	\ignorespaces%
 	\pagestyle{myheadings}%
 	%
@@ -151,7 +168,8 @@
 					\if@fb@existsSecondSection@
 						\normalfont\strut\thepage\hfil\slshape\leftmark\normalfont%
 					\else
-						\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
+					%	\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
+						\normalfont\strut\scshape\fb@TitleBox\normalfont\hfil\thepage\normalfont%
 					\fi
 					%\normalfont\strut\slshape\rightmark\normalfont\hfil\thepage%
 				}%
@@ -168,8 +186,11 @@
 			{%
 				\hbox to \textwidth%
 				{%
-					\normalfont\strut\scshape\fb@TitleBox\normalfont\hfil\thepage\normalfont%
-					%\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
+					\if@fb@existsSecondSection@
+						\normalfont\strut\scshape\fb@TitleBox\normalfont\hfil\thepage\normalfont%
+					\else
+						\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
+					\fi
 				}%
 				\hrule
 			}%
@@ -178,7 +199,6 @@
 	\makeatother%
 }
 
-%\mal%
 \newlength{\fb@preprint@length}
 
 \newcommand*{\fb@preprint}[2][1.5cm]%
@@ -194,18 +214,19 @@
 	\mal%
 	\def\fb@CustomItem@check{\csname check#1\endcsname}%
 	%
-	\fb@CustomItem@check(1)%
-	\ifemptydata\else
-		\fb@CustomItem@check(2)%
+	\fb@CustomItem@check(1)%					% Проверка элемента № 1 в массиве, переданном в
+																		% качестве аргумента.
+	\ifemptydata\else									% Если первый элемент не пуст,
+		\fb@CustomItem@check(2)%				% то проверить ещё и второй.
 		\bfseries%
-		\ifemptydata
-			\def\fb@CustomItem@text{\textbf{#2:\ }}%
+		\ifemptydata										% Если второй элемент пуст,
+			\def\fb@CustomItem@text{\textbf{#2:\ }}%		% то печатаем второй аргумент;
 		\else
-			\def\fb@CustomItem@text{\textbf{#3:\ }}%
+			\def\fb@CustomItem@text{\textbf{#3:\ }}%		% иначе — первый.
 		\fi
 		\fb@preprint{\fb@CustomItem@text}%
 		\normalfont%
-	\fi
+	\fi%
 	\mao%
 }
 
@@ -262,12 +283,7 @@
 	\makeatother%	
 }
 
-% =============================================
-
-%%	Команды, исользуемые в LaTeX-документе. Например, команда
-%%		\fbtitle{Надо назвать поинтереснее}
-%%	сообщит пакету, что название фанфика --- "Надо назвать поинтереснее".
-%%	Эти команды ничего не выводят на печать --- они дают информацию для команды \maketitle (см. далее).
+% ==============================================================================
 
 %	\fbtitle{Название фанфика}
 \providecommand*{\fbtitle}[2]
@@ -277,11 +293,11 @@
 \providecommand*{\fbauthors}[2]
 {\readarray{fb@AuthorsBox}{#1}\readarray{fb@AuthorsLinkBox}{#2}}		
 
-% \fbtransl@ors{Имя переводчика(-ов)}
+% \fbtranslators{Имя переводчика(-ов)}
 \providecommand*{\fbtranslators}[2]
 {\readarray{fb@TranslatorsBox}{#1}\readarray{fb@TranslatorsLinkBox}{#2}}
 
-%\fbtransl@ors{Беты}
+%\fbtranslators{Беты}
 \providecommand*{\fbbetas}[2]
 {\readarray{fb@BetasBox}{#1}\readarray{fb@BetasLinkBox}{#2}}
 
@@ -293,11 +309,11 @@
 \providecommand*{\fbcharacters}[1]
 {\readarray{fb@CharactersBox}{#1}}
 
-% Пейринг
-\providecommand*{\fbpairing}[1]
+% Пейринг                  
+\providecommand*{\fbpairings}[1]
 {\readarray{fb@PairingBox}{#1}}
 
-% \fbr@ing{G / PG-13 / NC-17 / NC-21 / R}
+% \fbrating{G / PG-13 / NC-17 / NC-21 / R}
 \providecommand*{\fbrating}[1]
 {\readarray{fb@RatingBox}{#1}}
 
@@ -343,7 +359,7 @@
 	{%
 		\makeatletter%
 		\if@fb@existsSecondSection@ \fb@TotSections@getNum \else 1 \fi
-%		\ifnum \fb@TotSections@getNum=0 1 \else \fb@TotSections@getNum \fi%
+	%	\ifnum \fb@TotSections@getNum=0 1 \else \fb@TotSections@getNum \fi%
 		\makeatother%
 	}%
 	\makeatother%
@@ -383,11 +399,11 @@
 \providecommand{\fbdescription}[1]
 {\renewcommand{\fb@DescriptionBox}{#1}}
 
-% \fbdedic@ion{Посвящение}
+% \fbdedication{Посвящение}
 \providecommand{\fbdedication}[1]
 {\renewcommand{\fb@DedicationBox}{#1}}
 
-% \fbpublic@ion{Публикация на других ресурсах}
+% \fbpublication{Публикация на других ресурсах}
 \providecommand{\fbpublication}[1]
 {\renewcommand{\fb@PublicationBox}{#1}}
 
@@ -424,14 +440,14 @@
 
 % =================================================
 
-%% Печать заголовка
+% Печать заголовка
 \providecommand{\fbmaketitle}
 {%
 %	\inputencoding{utf8}
 	\makeatletter%
 	\clearpage%
 	\pagestyle{empty}%
-	\setcounter{page}{-10}
+	\setcounter{page}{-100}
 %	\pagenumbering{empty}%
 	\rule{0pt}{0pt}%
 	\hrule%
@@ -471,13 +487,13 @@
 	\fb@CustomItem{fb@CharactersBox}{Основные персонажи}{Основные персонажи}%
 	\fb@PrintItem{fb@CharactersBox}
 
-	\fb@CustomItem{fb@PairingBox}{Пэйринг}{Пэйринг}%
+	\fb@CustomItem{fb@PairingBox}{Пэйринг}{Пэйринги}%
 	\fb@PrintItem{fb@PairingBox}
 
-	\fb@CustomItem{fb@RatingBox}{Рейтинг}{\Error}%
+	\fb@CustomItem{fb@RatingBox}{Рейтинг}{Рейтинги}%
 	\fb@PrintItem{fb@RatingBox}
 
-	\fb@CustomItem{fb@GenresBox}{Жанры}{Жанры}%
+	\fb@CustomItem{fb@GenresBox}{Жанр}{Жанры}%
 	\fb@PrintItem{fb@GenresBox}
 
 	\fb@CustomItem{fb@WarningsBox}{Предупреждения}{Предупреждения}%
@@ -506,22 +522,26 @@
 
 	\clearpage%
 	\makeatletter%
-	\fb@setpagestyle%
-	\if@fb@firstCompilation@
-		\fb@maketoc
-	\fi
-	\if@fb@existsSecondSection@
+%	\fb@setpagestyle%
+%	\if@fb@firstCompilation@
+%		\fb@maketoc
+%	\fi
+%	\if@fb@existsSecondSection@
 		% Оглавление
-		\fb@maketoc
-	\fi
+%		\fb@maketoc
+%	\fi
+	\fb@maketoc
+	\fb@setpagestyle%
 	\makeatother%	
 	\setcounter{page}{1}%
-	\makeatother%
 %	\inputencoding{\fb@encoding}
 }
 
 \newcommand*{\fb@maketoc}%
 {%
+	\mal
+	\fb@settocpagestyle
+	\mao
 	\tableofcontents
 	\clearpage
 }
@@ -582,7 +602,7 @@
 	\normalfont\itshape
 }%
 {%
-	
+	\normalfont
 }
 
 \newenvironment{fbbold}%
