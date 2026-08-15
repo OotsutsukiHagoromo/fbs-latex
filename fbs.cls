@@ -1353,7 +1353,7 @@
 \newlength{\fbsepigraphwidth}
 % \setlength{\fbsepigraphwidth}{0.45\linewidth}
 % \setlength{\fbsepigraphwidth}{0.5\linewidth}
-\setlength{\fbsepigraphwidth}{0.7\linewidth}
+\setlength{\fbsepigraphwidth}{0.6\linewidth}
 \newenvironment{fbsepigraph}[1]
 {%	
 	\ifthenelse{\equal{#1}{}}{}%
@@ -1769,7 +1769,13 @@
 	\protect\footnote{\url{#2}}%
 }
 
+\newcommand*{\myhrefrev}[3][]{%
+	\myhref[#1]{#3}{#2}%
+}
+
 \let\fnhref=\myhref
+\let\fnhrefrev=\myhrefrev
+
 
 \renewcommand*{\thefootnote}{%
 	\arabic{footnote})%
