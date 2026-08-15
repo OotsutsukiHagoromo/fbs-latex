@@ -15,12 +15,20 @@
 %\DeclareOptionX{encoding}[utf8]{\renewcommand*{\fb@encoding}{#1}}
 %\ProcessOptionsX
 
-\RequirePackage[T2A]{fontenc}
+\RequirePackage[T2A,T1]{fontenc}
 \RequirePackage[utf8]{inputenc}
 \inputencoding{utf8}
 
 \RequirePackage[main=russian, english, francais, dutch]{babel}
-\babeltags{en = english, ru = russian, fr = francais, de = deutsch}
+\babeltags{en = english, ru = russian, fr = francais, de = dutch}
+
+% \usepackage{fontspec}
+% 	\setmainfont{DejaVu Serif}
+% 	\newfontfamily\cyrillicfont{DejaVu Serif}
+% 	\usepackage[babelshorthands]{polyglossia}
+% %\usepackage{tabularx}
+% 	\setdefaultlanguage{russian}
+% 	\setotherlanguage{english}
 
 \RequirePackage{ifthen}		% ifthenelse{<условие>}{<действия, если истинно>}{<действия, если ложно>}
 
@@ -52,17 +60,77 @@
 	left = 0.77in,
 	right = 0.77in,
 }
+% a5
+\geometry{%
+	%bottom = 0.55in,
+	bottom = 1.0in,
+	top = 1.0in,
+	left = 0.70in,
+	right = 0.70in,
+}
+\geometry{%
+	%bottom = 0.55in,
+	bottom = 1.0in,
+	top = 1.0in,
+	left = 0.60in,
+	right = 0.60in,
+}
 
-\RequirePackage{pscyr}
+\geometry{%
+	a5paper,
+	margin=1cm,
+	top=1.9cm,
+	bottom=1.7cm
+}
+
+% Для телефонов
+% \geometry{%
+% 	a5paper,
+% 	margin=5mm,
+% 	includehead,
+% 	includefoot
+% }
+
+% !!!
+% \RequirePackage{tempora}
+% \RequirePackage[libertine, varbb]{newtxmath}
+% \RequirePackage{erewhon}
+
+%%% \RequirePackage[math]{pscyr}
+%%% \renewcommand*{\rmdefault}{ftm}
+
+%\RequirePackage[libertine, varbb, varg, nosc]{newtx}
+\RequirePackage[libertine, varbb, varg]{newtx}
+\AtBeginDocument{%
+  \DeclareFontFamilySubstitution{T2A}{\scdefault}{Tempora-TLF}%
+}
+
 %\renewcommand*{\rmdefault}{fha}
 %\renewcommand*{\rmdefault}{fsv}
 %\renewcommand*{\rmdefault}{flz}
-\renewcommand*{\rmdefault}{fjn}
+%\renewcommand*{\rmdefault}{fjn}
+% \renewcommand*{\rmdefault}{ftm}
+% \renewcommand*{\ttdefault}{\sfdefault}
+
+% \RequirePackage{dejavu}
+% \renewcommand{\baselinestretch}{1.15}	% !!!
+
+
+% \RequirePackage[libertine, varbb]{newtx}
+% \RequirePackage{newtxmath}
+
+%\RequirePackage[scaled=0.95]{cabin}
+
+% \RequirePackage{setspace}
+%\renewcommand{\baselinestretch}{1.2}
+%\setlength{\baselineskip}{3ex}
+%\onehalfspacing
+%\singlespacing
 
 \RequirePackage{arrayjob} % Массивы
 \RequirePackage{multido}  % Циклы
 
-\RequirePackage{color}
+\RequirePackage{xcolor}
 
 %\definecolor{toclinkcolor}{rgb}{1,0.41,0.13}%{0.92,0.5,0.4}%%{rgb}%{0.74,0.024,1.0}%{0.74,0.024,0.92}
 %\definecolor{toclinkcolor}{rgb}{0.58,0,0.82}
@@ -70,13 +138,37 @@
 %\definecolor{urllinkcolor}{rgb}{0,0,1}
 \definecolor{urllinkcolor}{rgb}{0,0,0.82}
 
+% https://coolors.co/d64045-f3f7f0-09bc8a-467599-1d3354
+\definecolor{Poppy}    {HTML}{d64045}
+\definecolor{MintCream}{HTML}{F3F7F0}
+\definecolor{Mint}     {HTML}{09BC8A}
+\definecolor{UCLABlue} {HTML}{467599}
+\definecolor{DelftBlue}{HTML}{1D3354}
+
+% https://coolors.co/0fa3b1-0a1128-001f54-034078-fefcfb
+
+\definecolor{Moonstone} {HTML}{0fa3b1}
+\definecolor{OxfordBlue}{HTML}{0a1128}
+\definecolor{PennBlue}  {HTML}{001f54}
+\definecolor{Indigo}    {HTML}{034078}
+\definecolor{White}     {HTML}{fefcfb}
+
+% https://coolors.co/18206f-17255a-f5e2c8-d88373-bd1e1e
+\definecolor{MidnightBlue}{HTML}{18206f}
+\definecolor{PennBlueTwo} {HTML}{17255a}
+\definecolor{Champagne}   {HTML}{f5e2c8}
+\definecolor{CoralPink}   {HTML}{d88373}
+\definecolor{CornellRed}  {HTML}{bd1e1e}
+
 \RequirePackage{hyperref}	% Для ссылок
 \hypersetup{%
 	breaklinks=true,%
 	colorlinks=true,%
 	extension=pdf,%
-	urlcolor=urllinkcolor,%
-	linkcolor=toclinkcolor,%
+	% urlcolor=urllinkcolor,%
+	% linkcolor=toclinkcolor,%
+	urlcolor=PennBlue,
+	linkcolor=PennBlue,
 	unicode=true,%
 	draft=false,%
 	pdfpagemode={},%
@@ -86,8 +178,25 @@
 %	pageanchor=true%
 }
 
+% \urlstyle{sf}
+%\renewcommand*{\UrlFont}{\fontfamily{arial}\selectfont}
+
+% \renewcommand*{\UrlFont}{\sf}
+\urlstyle{sf}
+
 \RequirePackage{tocloft}
 
+\RequirePackage{fnpct}
+
+\RequirePackage[%
+	kerning=true,
+	spacing=true,
+	protrusion=true,
+	babel=true,
+	factor=1000
+]{microtype}
+
+\RequirePackage{enumerate}
 
 % =============================================================================
 
@@ -121,6 +230,7 @@
 % Контейнеры для текста в виде команд и массивов. Инициализация пустой строкой:
 
 \newcommand*{\fb@TitleBox}{}
+\newcommand*{\fb@TitleKolontitulBox}{}
 \newcommand*{\fb@FicLinkBox}{}
 %
 \newarray\fb@AuthorsBox
@@ -160,59 +270,9 @@
 	\renewcommand{\cftaftertoctitle}{%
 		\hfill\rule{0pt}{0pt}%
 		\thispagestyle{empty}%
-		\fb@settocheadings
+		\pagestyle{empty}%
 	}%
 	\setlength{\cftbeforetoctitleskip}{0pt}%
-}
-%
-\newcommand*{\fb@settocheadings}
-{%
-	\ignorespaces%
-	\pagestyle{myheadings}%
-	%
-	\makeatletter%
-	\renewcommand*{\@oddhead}%	Односторонняя печать
-	{%
-		\raisebox{0pt}[\headheight][0pt]%	Начало блока
-		{%
-			\vbox%
-			{%
-				\hbox to \textwidth%
-				{%
-					\normalfont%
-					\strut%
-					\scshape
-					Оглавление
-					\normalfont%
-				}%
-				\hrule%
-			}%
-		}%
-	}%
-	%
-	\renewcommand*{\@evenhead}%	Двусторонняя печать
-	{%
-		\raisebox{0pt}[\headheight][0pt]%	Начало блока
-		{%
-			\vbox%
-			{%
-				\hbox to \textwidth%
-				{%
-					\if@fb@existsSecondSection@
-						\normalfont\strut\scshape
-						Оглавление%
-						\normalfont\hfil\thepage\normalfont%
-					\else
-						\normalfont\strut\thepage\hfil\scshape
-						Оглавление%
-						\normalfont%
-					\fi
-				}%
-				\hrule
-			}%
-		}%
-	}%
-	\makeatother%
 }
 %
 % Колонтитулы
@@ -231,12 +291,37 @@
 				\hbox to \textwidth%
 				{%
 					\if@fb@existsSecondSection@
-						\normalfont\strut\thepage\hfil\slshape\leftmark\normalfont%
+						\normalfont%
+						\strut%
+						\thepage%
+						\hfil%
+						\slshape%
+						\leftmark%
+						\normalfont%
 					\else
-					%	\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
-						\normalfont\strut\scshape\fb@TitleBox\normalfont\hfil\thepage\normalfont%
+						% \normalfont
+						% \strut
+						% \thepage
+						% \hfil
+						% \scshape
+						% \fb@TitleKolontitulBox
+						% \normalfont%
+						\normalfont
+						\strut
+						\scshape
+						\fb@TitleKolontitulBox
+						\normalfont
+						\hfil
+						\thepage
+						\normalfont%
 					\fi
-					%\normalfont\strut\slshape\rightmark\normalfont\hfil\thepage%
+					%\normalfont
+					%\strut
+					%\slshape
+					%\rightmark
+					%\normalfont
+					%\hfil
+					%\thepage%
 				}%
 				\hrule%
 			}%
@@ -252,9 +337,22 @@
 				\hbox to \textwidth%
 				{%
 					\if@fb@existsSecondSection@
-						\normalfont\strut\scshape\fb@TitleBox\normalfont\hfil\thepage\normalfont%
+						\normalfont%
+						\strut%
+						\scshape%
+						\fb@TitleKolontitulBox%
+						\normalfont%
+						\hfil%
+						\thepage%
+						\normalfont%
 					\else
-						\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
+						\normalfont%
+						\strut%
+						\thepage%
+						\hfil%
+						\scshape%
+						\fb@TitleKolontitulBox%
+						\normalfont%
 					\fi
 				}%
 				\hrule
@@ -351,8 +449,16 @@
 % ==============================================================================
 
 %	\fbtitle{Название фанфика}
-\providecommand*{\fbtitle}[2]
-{\renewcommand*{\fb@TitleBox}{#1}\renewcommand*{\fb@FicLinkBox}{#2}}
+\providecommand*{\fbtitle}[3][]%
+{%
+	\ifthenelse{\equal{#1}{}}{%
+		\renewcommand*{\fb@TitleKolontitulBox}{#2}%
+	}{%
+		\renewcommand*{\fb@TitleKolontitulBox}{#1}%
+	}%
+	\renewcommand*{\fb@TitleBox}{#2}%
+	\renewcommand*{\fb@FicLinkBox}{#3}%
+}
 
 % \fbauthors{Имя автора(-ов) (c URL-адресами на их страницы)
 \providecommand*{\fbauthors}[2]
@@ -488,13 +594,32 @@
 % \providecommand*{\fbsection}[1]%
 % {\chapter*{#1}\addcontentsline{toc}{section}{#1}\markboth{#1}{}\stepcounter{fb@TotSections@cnt}}
 
-\providecommand*{\fbsection}[1]{%
+\providecommand*{\fbsection}[2][]{%
 	\clearpage%
 	\thispagestyle{plain}%
-	\rule{0pt}{0pt}\vspace{50pt plus 10pt minus 10pt}%
-	\section*{#1}%
-	\addcontentsline{toc}{section}{#1}%
-	\markboth{#1}{}%
+	%\rule{0pt}{0pt}%
+	%\vspace*{50pt plus 10pt minus 10pt}%
+	%\vspace*{6\baselineskip}%
+	\vspace*{5\baselineskip}%
+	%\hspace*{\parindent}%
+	%\section*{#2}%
+	\par\noindent
+	{\LARGE\bfseries
+		%\flushleft
+		\hyphenpenalty=10000%
+		\rule{0pt}{0pt}%
+		\hspace{1\parindent}%
+		#2\par
+	}%
+	%\bigskip
+	\addvspace{1\baselineskip}%
+	\ifthenelse{\equal{#1}{}}{%
+		\addcontentsline{toc}{section}{#2}%
+		\markboth{#2}{}%
+	}{%
+		\addcontentsline{toc}{section}{#1}%
+		\markboth{#1}{}%
+	}%
 	\stepcounter{fb@TotSections@cnt}%
 }
 
@@ -591,20 +716,33 @@
 	{\noindent\textbf{Статус: \fb@StatusBox}\par}
 		
 	\ifthenelse{\equal{\fb@DescriptionBox}{}}{}%
-	{\medskip\noindent\textbf{Описание:}\par\fb@DescriptionBox\par}
+	{\medskip\noindent\textbf{Описание:}%
+	\par%
+	\addpenalty{10000}%
+	\fb@DescriptionBox\par}
 		
 	\ifthenelse{\equal{\fb@DedicationBox}{}}{}%
-	{\medskip\noindent\textbf{Посвящение:}\par\fb@DedicationBox\par}
+	{\medskip\noindent\textbf{Посвящение:}%
+	\par%
+	\addpenalty{10000}%
+	\fb@DedicationBox\par}
 		
 	\ifthenelse{\equal{\fb@PublicationBox}{}}{}%
-	{\medskip\noindent\textbf{Публикация на других ресурсах:}\par\fb@PublicationBox\par}
+	{\medskip\noindent\textbf{Публикация на других ресурсах:}%
+	\par%
+	\addpenalty{10000}%
+	\fb@PublicationBox\par}
 	
 	\ifthenelse{\equal{\fb@AuthorsCommentsBox}{}}{}%
-	{\medskip\noindent\textbf{Примечания автора:}\par\fb@AuthorsCommentsBox\par}
+	{\medskip\noindent\textbf{Примечания автора:}%
+	\par%
+	\addpenalty{10000}%
+	\fb@AuthorsCommentsBox\par}
 
 	\clearpage%
 	\makeatletter%
-	\fb@setpagestyle%
+	%\fb@setpagestyle%
+	\pagestyle{empty}%
 	\if@fb@firstCompilation@
 		\fb@maketoc
 	\fi
@@ -626,9 +764,6 @@
 	\mao
 	\tableofcontents
 	\clearpage
-	\mal
-	\fb@setpagestyle
-	\mao
 }
 
 \newcommand*{\fbepauthorbox}{}
@@ -639,19 +774,24 @@
 	{%
 		\fbepauthor{#1}
 	}
-	\par\begin{flushright}\begin{minipage}{0.45\linewidth}%
-}%
-{%
+	\par\begin{flushright}%
+		\begin{minipage}{0.45\linewidth}%
+}{%
 	\par%
+	\addpenalty{10000}%
 	\addvspace{\bigskipamount}%
+	\addpenalty{10000}%
 	\hrule%
 %	\begin{flushright}\textsl{\fbepauthor}\end{flushright}%
-	\medskip%
+	\addpenalty{10000}%
+	\addvspace{\medskipamount}%
+	\addpenalty{10000}%
 	\hfill%
 	\textsl{\fbepauthorbox}%
 	\end{minipage}\end{flushright}\par%
 	\renewcommand{\fbepauthor}[1]{}%
 }
+
 
 \newcommand*{\fbsignaturebox}{}
 \newcommand{\fbsignature}[1]{\renewcommand*{\fbsignaturebox}{#1}}
@@ -671,20 +811,30 @@
 	\normalfont%
 }
 
-\newenvironment{fbremark}%
+\newcommand{\epigraph}[2]{%
+	\begin{fbepigraph}{#2}
+		#1
+	\end{fbepigraph}%
+}
+
+\newenvironment{fbremark}[1][Примечание к части.]%
 {%
-	\par%
 	\addvspace{\bigskipamount}%
+	\par%
 	% \par
-	\noindent%
-	\textbf{Примечание к части.}%
-	\par\nopagebreak\indent%
+	%\noindent%
+	\textbf{#1}%
+	%\textbf{#1}
+	\par
+	%\indent
+	\nopagebreak[4]%
 	\makeatletter%
-	\hangindent=\fb@indent%
+	\hangindent=\fb@indent
 	\makeatother%
 }%
 {%
 	\par%
+	\addvspace{\bigskipamount}%
 }
 
 % \usefont{ENC}{family}{series}{shape}
@@ -713,15 +863,44 @@
 	\normalfont
 }
 
-\newcommand*{\textstars}{%
-	\addvspace{1em}\par
-	\begingroup
-	\centering
-	\ensuremath{*\ *\ *}\par
-	\endgroup
-	\addvspace{1em}\par
-}
+\newlength{\textstarsverticallength}
+%\setlength{\textstarsverticallength}{1em minus 0.3em}
+%\setlength{\textstarsverticallength}{%
+%	2.0ex
+%	%plus  1ex
+%	%minus 1\baselineskip
+%}
+\setlength{\textstarsverticallength}{0.79\baselineskip}
 
+\newcommand*{\textstars}{%
+	\begingroup
+		\setlength{\parskip}{0pt}%
+		\setlength{\parindent}{0pt}%
+		\par
+		\addpenalty{10000}%
+		\addvspace{\textstarsverticallength}%
+		\vbox{%
+			%\hbox{%
+			%	\rule{\textstarsverticallength}{\textstarsverticallength}%
+			%}
+			\hbox to \textwidth {%
+				\hfill
+				\raisebox{0pt}[0pt][0pt]{%
+					%\ensuremath{-\ *\ *\ *\ -}%
+					\ensuremath{*\ *\ *}%
+				}%
+				\hfill
+			}
+			%\hbox{%
+			% \rule{\textstarsverticallength}{\textstarsverticallength}%
+			%}%
+		}%
+		\par
+		%\addpenalty{10000}%
+		\addvspace{\textstarsverticallength}%
+		%\vspace{\textstarsverticallength}%
+	\endgroup
+}
 
 \newlength{\journalLength}
 \setlength{\journalLength}{0.5\parindent}
@@ -770,24 +949,64 @@
 	\endgroup
 }
 
-\renewcommand*{\date}[1]{\fbsubsection{#1}}
+% \renewcommand*{\date}[1]{\fbsubsection{#1}}
 \newcommand*{\shortruler}{%
-	\par\noindent\medskip{%
-		\hspace*{\fill}%
-		\hbox to 7cm {\hrulefill}%
-		\hspace*{\fill}%
-	}%
+\par\noindent\medskip{%
+	\hspace*{\fill}%
+	\hbox to 7cm {\hrulefill}%
+	\hspace*{\fill}%
+}%
 \par\medskip}
-%\renewcommand*{\rmdefault}{fjn}
-\renewcommand*{\rmdefault}{ftm}
-\renewcommand*{\ttdefault}{\sfdefault}
+
+\renewcommand*{\date}[1]{%
+	\addvspace{%
+		1\baselineskip
+		plus
+		0.5\baselineskip
+		minus
+		0.1\baselineskip
+	}%
+	{%
+		\par
+		\large
+		\bfseries
+		#1%
+	}%
+	\addcontentsline{toc}{subsection}{#1}%
+	\markboth{#1}{}%
+	\nopagebreak[4]%
+	\vspace{0.5\baselineskip minus 0.1\baselineskip}%
+	\par
+}
 
 \newcommand*{\spell}[1]{\textit{#1}}
 
 \AtBeginDocument{%
-% Минимальное количество символов, оставляемое до переноса слова
-% См. newllang, 117.
+	% Минимальное количество символов, оставляемое до переноса слова
+	% См. newllang, 117.
 	\righthyphenmin=2
+	\lefthyphenmin=2
+
+	% Растяжение пробелов.
+	% Рекомендация — использовать в виде
+	%
+	% 	Абзац
+	% 	{\sloppy\par}
+	%
+	% 	{Абзац
+	% 	\sloppy\par}
+	%
+	% 	{\sloppy
+	% 	Абзац
+	% 	\par}
+	%
+	% или
+	%
+	% 	Абзац
+	% 	\sloppy\par
+	% 	\fuzzy
+
+	% \sloppy
 }
 
 \AtEndDocument%
@@ -822,3 +1041,94 @@
 	\par%
 	\addvspace{0.79\baselineskip}%
 }%
+
+\newcounter{commentcounter}
+\setcounter{commentcounter}{0}
+\renewcommand*{\thecommentcounter}{%
+	%{\color[rgb]{1,0.2,0.1}
+		\arabic{commentcounter})
+	%}%
+}
+
+\newcommand*{\comment}[2]{%
+%	{%
+%		\color[rgb]{1,0.2,0.1}%
+		#1%
+%	}%
+%	%\refstepcounter{commentcounter}%
+%	\commentfootnote{#2}%
+%	%\footnotemark{\thecommentcounter}%
+%	%\footnotetext{#2}%
+}
+
+\newcounter{savefootnotecounter}
+
+\newcommand*{\commentfootnote}[1]{%
+	{
+		\setcounter{savefootnotecounter}{\value{footnote}}%
+		\setcounter{footnote}{\value{commentcounter}}%
+		\renewcommand*{\thefootnote}{\arabic{footnote}]}%
+		\footnote{#1}%
+		\setcounter{footnote}{\value{savefootnotecounter}}%
+	}%
+}
+
+\newcommand*{\langnameen}{англ.}
+\newcommand*{\Langnameen}{Англ.}
+\newcommand*{\langnameru}{рус.}
+\newcommand*{\Langnameru}{Рус.}
+\newcommand*{\langnamede}{нем.}
+\newcommand*{\Langnamede}{Нем.}
+\newcommand*{\langnamefr}{фр.}
+\newcommand*{\LangnameFr}{Фр.}
+
+\mal
+
+\newif\if@capital@letter@
+
+\newcommand*{\phrasetranslate}{%
+	\@ifstar\@phrasetranslate@star\@phrasetranslate@
+}
+
+\newcommand*{\@phrasetranslate@star}{%
+	\@capital@letter@false
+	\@phrasetranslate
+}
+
+\newcommand*{\@phrasetranslate@}{%
+	\@capital@letter@true
+	\@phrasetranslate
+}
+
+\newcommand*{\@phrasetranslate}[3][de]{%
+	{\csname text#1 \endcsname{\textit{#2}}}%
+	\footnote{%
+		%#2 (\textit{#3}) --- #4
+		#3 (\textit{%
+			%#3
+			\if@capital@letter@
+				\csname Langname#1\endcsname
+			\else
+				\csname langname#1\endcsname
+			\fi
+		})
+	}%
+}
+
+\renewcommand*{\dots}{...}
+
+\newcommand*{\handwr}[1]{\emph{#1}}
+
+\mao
+
+\let\fbnewsection=\fbsection
+
+\newcommand{\sms}[1]{%
+	\begin{quote}
+		\sffamily
+		#1%
+	\end{quote}%
+}
+
+\newcommand{\interlude}[1]{\par\addvspace{\medskipamount}{\itshape #1}\par\nopagebreak\addvspace{\medskipamount}}
+
