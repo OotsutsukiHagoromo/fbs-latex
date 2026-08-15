@@ -1,7 +1,7 @@
 %%	Стилевой пакет LaTeX, разработанный для конвертирования фанфиков
 %%	с сайта ficbook.net в формат pdf.
 %%	
-%%	(c) Rikudo_Sannin, 2016--2017
+%%	(c) Rikudo_Sannin, 2016--2017, 2019, 2020, 2021
 
 \NeedsTeXFormat{LaTeX2e}
 
@@ -17,9 +17,11 @@
 
 \RequirePackage[T2A]{fontenc}
 \RequirePackage[utf8]{inputenc}
-%\inputencoding{utf8}
+\inputencoding{utf8}
 
-\RequirePackage[main=russian, english]{babel}
+\RequirePackage[main=russian, english, francais, dutch]{babel}
+\babeltags{en = english, ru = russian, fr = francais, de = deutsch}
+
 \RequirePackage{ifthen}		% ifthenelse{<условие>}{<действия, если истинно>}{<действия, если ложно>}
 
 % =========================
@@ -43,6 +45,13 @@
 \RequirePackage{geometry}
 %\geometry{top = 3cm, bottom = 2.5cm , left = 2.5cm, right = 2.5cm}
 \geometry{margin = 0.95in, top = 1in}
+\geometry{%
+	%bottom = 0.55in,
+	bottom = 1.0in,
+	top = 1.0in,
+	left = 0.77in,
+	right = 0.77in,
+}
 
 \RequirePackage{pscyr}
 %\renewcommand*{\rmdefault}{fha}
@@ -56,8 +65,10 @@
 \RequirePackage{color}
 
 %\definecolor{toclinkcolor}{rgb}{1,0.41,0.13}%{0.92,0.5,0.4}%%{rgb}%{0.74,0.024,1.0}%{0.74,0.024,0.92}
-\definecolor{toclinkcolor}{rgb}{0.58,0,0.82}
-\definecolor{urllinkcolor}{rgb}{0,0,1}
+%\definecolor{toclinkcolor}{rgb}{0.58,0,0.82}
+\definecolor{toclinkcolor}{rgb}{0,0,0.82}
+%\definecolor{urllinkcolor}{rgb}{0,0,1}
+\definecolor{urllinkcolor}{rgb}{0,0,0.82}
 
 \RequirePackage{hyperref}	% Для ссылок
 \hypersetup{%
@@ -413,14 +424,25 @@
 
 % ==============================================
 
-\setcounter{secnumdepth}{0}	% Нумерация разделов заканчивается на уровне 0, то есть не начинается совсем.
+% Нумерация разделов заканчивается на уровне 0, то есть не начинается совсем.
+\setcounter{secnumdepth}{0}
 
 % !!!!!!!!!!!!!
 % Почему не нужна эта команда?
 %\renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
 
-\providecommand*{\fbsection}[1]%
-{\chapter*{#1}\addcontentsline{toc}{section}{#1}\markboth{#1}{}\stepcounter{fb@TotSections@cnt}}
+% \providecommand*{\fbsection}[1]%
+% {\chapter*{#1}\addcontentsline{toc}{section}{#1}\markboth{#1}{}\stepcounter{fb@TotSections@cnt}}
+
+\providecommand*{\fbsection}[1]{%
+	\clearpage%
+	\thispagestyle{plain}%
+	\rule{0pt}{0pt}\vspace{50pt plus 10pt minus 10pt}%
+	\section*{#1}%
+	\addcontentsline{toc}{section}{#1}%
+	\markboth{#1}{}%
+	\stepcounter{fb@TotSections@cnt}%
+}
 
 %\providecommand*{\fbsection}[1]
 %{\section*{#1}\addcontentsline{toc}{section}{#1}\markright{#1}\stepcounter{fb@TotSections@cnt}}%
@@ -452,14 +474,20 @@
 	\rule{0pt}{0pt}%
 	\hrule%
 	\vskip 0.5in%
-	\begin{center}
+	{\centering
+	%\begin{center}
 		\bfseries%
 		\huge\fb@TitleBox%
 		\ifthenelse{\equal{\fb@FicLinkBox}{}}{}%
 		{%
-			\par\large\fb@FicLinkBox%
+			\par
+			\addvspace{1.5\bigskipamount}
+			\large
+			\fb@FicLinkBox
 		}%
-	\end  {center}
+		\par
+	%\end  {center}
+	}
 	\par%
 	\normalfont%
 	\vskip 0.5in
@@ -558,7 +586,7 @@
 }%
 {%
 	\par%
-	\bigskip%
+	\addvspace{\bigskipamount}%
 	\hrule%
 %	\begin{flushright}\textsl{\fbepauthor}\end{flushright}%
 	\medskip%
@@ -572,21 +600,28 @@
 \newcommand{\fbsignature}[1]{\renewcommand*{\fbsignaturebox}{#1}}
 \newenvironment{fbhandwritten}
 {%
-	\par\itshape\par%
+	\par%
+	\addvspace{\bigskipamount}%
+	\itshape%
 }
 {%
-	\par\noindent%
-	\hspace*{\fill}\fbsignaturebox%
-	\par\normalfont%
+	\ifthenelse{\equal{\fbsignaturebox}{}}{}{%
+		\par\noindent%
+		\hspace*{\fill}\fbsignaturebox%
+	}%
+	\par%
+	\addvspace{\bigskipamount}%
+	\normalfont%
 }
 
 \newenvironment{fbremark}%
 {%
 	\par%
-	\bigskip%
-	\par\noindent%
+	\addvspace{\bigskipamount}%
+	% \par
+	\noindent%
 	\textbf{Примечание к части.}%
-	\par\indent%
+	\par\nopagebreak\indent%
 	\makeatletter%
 	\hangindent=\fb@indent%
 	\makeatother%
@@ -621,6 +656,83 @@
 	\normalfont
 }
 
+\newcommand*{\textstars}{%
+	\addvspace{1em}\par
+	\begingroup
+	\centering
+	\ensuremath{*\ *\ *}\par
+	\endgroup
+	\addvspace{1em}\par
+}
+
+
+\newlength{\journalLength}
+\setlength{\journalLength}{0.5\parindent}
+
+\newenvironment{journal}[1][]{%
+	\par%
+	\addvspace{\bigskipamount}%
+	\begingroup
+	\sffamily
+	\noindent
+	%\centering
+	\rule{0pt}{0pt}
+	\hspace{\journalLength}
+	\ifthenelse{\equal{#1}{}}{%
+		\hrulefill
+	}{%
+		%\hbox to 0.7in {\hrulefill}
+		%\hspace{\fill}
+		\hrulefill
+		\hspace{1em}%
+		#1%
+		\hspace{1em}%
+		\hrulefill
+		%\hspace{\fill}
+		%\hbox to 0.7in {\hrulefill}
+	}
+	\hspace{\journalLength}
+	\rule{0pt}{0pt}
+	\par%
+	\medskip
+	%\sloppy
+	%\hyphenpenalty=10000
+}{%
+	\par%
+	\noindent
+	\rule{0pt}{0pt}%
+	\hspace{\journalLength}
+	\hrulefill
+	% \hbox to 0.7in {\hrulefill}
+	\hspace{\journalLength}
+	%\hfill
+	\rule{0pt}{0pt}%
+	\par
+	\addvspace{\bigskipamount}%
+	%\normalfont
+	\endgroup
+}
+
+\renewcommand*{\date}[1]{\fbsubsection{#1}}
+\newcommand*{\shortruler}{%
+	\par\noindent\medskip{%
+		\hspace*{\fill}%
+		\hbox to 7cm {\hrulefill}%
+		\hspace*{\fill}%
+	}%
+\par\medskip}
+%\renewcommand*{\rmdefault}{fjn}
+\renewcommand*{\rmdefault}{ftm}
+\renewcommand*{\ttdefault}{\sfdefault}
+
+\newcommand*{\spell}[1]{\textit{#1}}
+
+\AtBeginDocument{%
+% Минимальное количество символов, оставляемое до переноса слова
+% См. newllang, 117.
+	\righthyphenmin=2
+}
+
 \AtEndDocument%
 {%
 	\makeatletter%
@@ -646,3 +758,10 @@
 %\inputencoding{\fb@encoding}
 
 \global\makeatother
+
+\newcommand*{\when}[1]{%
+	\addvspace{1\baselineskip}%
+	\textit{#1}%
+	\par%
+	\addvspace{0.79\baselineskip}%
+}%
