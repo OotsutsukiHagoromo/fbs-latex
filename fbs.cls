@@ -1350,6 +1350,10 @@
 \newcommand*{\fbsepauthor}[1]{%
 	\renewcommand*{\fbsepauthorbox}{#1}%
 }
+\newlength{\fbsepigraphwidth}
+% \setlength{\fbsepigraphwidth}{0.45\linewidth}
+% \setlength{\fbsepigraphwidth}{0.5\linewidth}
+\setlength{\fbsepigraphwidth}{0.7\linewidth}
 \newenvironment{fbsepigraph}[1]
 {%	
 	\ifthenelse{\equal{#1}{}}{}%
@@ -1357,7 +1361,7 @@
 		\fbsepauthor{#1}
 	}
 	\par\begin{flushright}%
-		\begin{minipage}{0.45\linewidth}%
+		\begin{minipage}{\fbsepigraphwidth}%
 }{%
 	\par%
 	\addpenalty{10000}%
