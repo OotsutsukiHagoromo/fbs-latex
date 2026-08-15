@@ -14,6 +14,8 @@
 %    в зависимости от того, какой это сайт. Опционально — в зависимости от
 %    того, какие опции есть, а какие нет.
 % 4. Сделать так, чтобы оно работало.
+% 5. \everypar{\hangindent=2\parindent} или что-то вроде того
+% 6. Или лучше через description? Всё придумано до нас
 
 \NeedsTeXFormat{LaTeX2e}[2023-01-01]%
 %
@@ -35,6 +37,15 @@
 
 \newif\iffbs@phonemode
 \newif\iffbs@printmode
+
+\newif\iffbs@indentfirstmode
+\fbs@indentfirstmodetrue
+
+\newif\iffbs@pscyr
+\fbs@pscyrfalse
+
+\newif\iffbs@redacton
+\fbs@redactonfalse
 
 \mao
 
@@ -61,6 +72,18 @@
 \DeclareOption{print}{%
 	\fbs@phonemodefalse
 	\fbs@printmodetrue
+}
+
+\DeclareOption{pscyr}{%
+	\fbs@pscyrtrue
+}
+
+\DeclareOption{mynoindentfirst}{%
+	\fbs@indentfirstmodefalse
+}
+
+\DeclareOption{redact}{%
+	\fbs@redactontrue
 }
 
 
@@ -109,6 +132,7 @@
 \inputencoding{utf8}
 
 \RequirePackage[main = russian, english, francais, dutch]{babel}
+% \texten, \textru, ...
 \babeltags{en = english, ru = russian, fr = francais, de = dutch}
 
 % =============================================================================
@@ -138,9 +162,14 @@
 
 % =============================================================================
 
-\RequirePackage{soul}
+\iffbs@indentfirstmode
+	\RequirePackage{indentfirst}
+\fi
 
-\RequirePackage{indentfirst}
+\RequirePackage{soul}
+% \newcommand*{\np}{\relax}
+\RequirePackage[np]{numprint}
+
 \RequirePackage{xifthen}
 
 % Действия над числами
@@ -198,21 +227,24 @@
 % \RequirePackage{tempora}
 % \RequirePackage{erewhon}
 
-%%% \RequirePackage[math]{pscyr}
-%%% \renewcommand*{\rmdefault}{ftm}
-%\renewcommand*{\rmdefault}{fha}
-%\renewcommand*{\rmdefault}{fsv}
-%\renewcommand*{\rmdefault}{flz}
-%\renewcommand*{\rmdefault}{fjn}
-% \renewcommand*{\rmdefault}{ftm}
-% \renewcommand*{\ttdefault}{\sfdefault}
 
 % =============================================================================
 
-\RequirePackage[libertinus, varbb, varg]{newtx}
-\AtBeginDocument{%
-  \DeclareFontFamilySubstitution{T2A}{\scdefault}{Tempora-TLF}%
-}
+\iffbs@pscyr
+	\RequirePackage[math]{pscyr}
+	\renewcommand*{\rmdefault}{ftm}
+	%\renewcommand*{\rmdefault}{fha}
+	%\renewcommand*{\rmdefault}{fsv}
+	%\renewcommand*{\rmdefault}{flz}
+	%\renewcommand*{\rmdefault}{fjn}
+	% \renewcommand*{\rmdefault}{ftm}
+	% \renewcommand*{\ttdefault}{\sfdefault}
+\else
+	\RequirePackage[libertinus, varbb, varg]{newtx}
+	\AtBeginDocument{%
+		\DeclareFontFamilySubstitution{T2A}{\scdefault}{Tempora-TLF}%
+	}
+\fi
 
 % \RequirePackage{dejavu}
 % \renewcommand{\baselinestretch}{1.15}	% !!!
@@ -261,9 +293,12 @@
 \definecolor{Champagne}   {HTML}{f5e2c8}
 \definecolor{CoralPink}   {HTML}{d88373}
 \definecolor{CornellRed}  {HTML}{bd1e1e}
+\definecolor{CaribbeanCurrent}{HTML}{3C6E71}
 
 \colorlet{myurlcolor}{PennBlue}
 \colorlet{mylinkcolor}{PennBlue}
+\colorlet{myredactwrong}{CornellRed}
+\colorlet{myredactcorrect}{CaribbeanCurrent}
 
 % =================================	Hyperref ==================================
 
@@ -302,6 +337,7 @@
 % \RequirePackage{enumitem}
 % \RequirePackage{enumerate}
 \RequirePackage[shortlabels]{enumitem}
+% \RequirePackage[np]{numprint}
 
 % ================================== Errors ===================================
 
@@ -454,11 +490,11 @@
 		% \fi
 	}%
 	%
-	\fbs@makeBoxName{fbs@AuthorsBoxSingle}{Автор}{Author}
-	\fbs@makeBoxName{fbs@AuthorsBoxPlural}{Авторы}{Authors}
+	% \fbs@makeBoxName{fbs@AuthorsBoxSingle}{Автор}{Author}
+	% \fbs@makeBoxName{fbs@AuthorsBoxPlural}{Авторы}{Authors}
 	%
-	\fbs@makeBoxName{fbs@AuthorsBoxSingle}{Автор}{Author}
-	\fbs@makeBoxName{fbs@AuthorsBoxPlural}{Авторы}{Authors}
+	% \fbs@makeBoxName{fbs@AuthorsBoxSingle}{Автор}{Author}
+	% \fbs@makeBoxName{fbs@AuthorsBoxPlural}{Авторы}{Authors}
 	%
 	\mao
 }
@@ -466,7 +502,7 @@
 
 % ==============================================================================
 
-\newcommand*{\fbClearFields}{%
+\newcommand*{\fbsclearfields}{%
 	\begingroup
 	\ignorespaces
 	\mal
@@ -538,8 +574,12 @@
 
 \newcommand*{\fbs@settocpagestyle}
 {%
-	% \renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}%
-	\renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}%
+	\renewcommand{\cfttoctitlefont}{%
+		\hfill
+		% \Huge
+		\LARGE
+		\bfseries
+	}%
 	\renewcommand{\cftaftertoctitle}{%
 		\hfill\rule{0pt}{0pt}%
 		\thispagestyle{empty}%
@@ -581,7 +621,8 @@
 						% \normalfont%
 						\normalfont
 						\strut
-						\scshape
+						% \scshape
+						\itshape
 						\fbs@TitleColontitulBox
 						\normalfont
 						\hfil
@@ -612,7 +653,8 @@
 					\if@fbs@existsSecondSection@
 						\normalfont%
 						\strut%
-						\scshape%
+						% \scshape%
+						\itshape
 						\fbs@TitleColontitulBox%
 						\normalfont%
 						\hfil%
@@ -623,7 +665,8 @@
 						\strut%
 						\thepage%
 						\hfil%
-						\scshape%
+						% \scshape%
+						\itshape
 						\fbs@TitleColontitulBox%
 						\normalfont%
 					\fi
@@ -671,13 +714,16 @@
 
 
 \newlength{\fbs@preprint@length}
+\setlength{\fbs@preprint@length}{1\parindent}
 
 % Устанавливает значение \hangindent — втяжки абзаца
-\newcommand*{\fbs@preprint}[2][1.5cm]%
+\newcommand*{\fbs@preprint}[2][1\parindent]%[1.5cm]%
 {%
 	\mal%
-	\settowidth{\fbs@preprint@length}{#1}%
-	\par\hangindent=\fbs@preprint@length\noindent{}#2%
+	% \settowidth{\fbs@preprint@length}{#1}%
+	\setlength{\fbs@preprint@length}{#1}%
+	\par
+	\hangindent=\fbs@preprint@length\noindent{}#2%
 	\mao%
 }
 
@@ -729,8 +775,8 @@
 	%
 	\mao%
 }
-
-\newcommand*{\fbs@PrintItemTwo}[3][\\]%	[разделитель]{Массив имён}{Массив ссылок}
+%	[разделитель]{Массив имён}{Массив ссылок}
+\newcommand*{\fbs@PrintItemTwo}[3][\\]%
 {%
 	\ignorespaces%
 	\makeatletter%
@@ -764,8 +810,8 @@
 
 % ==============================================================================
 
-%	\fbtitle{Название фанфика}
-\providecommand*{\fbtitle}[3][]%
+%	\fbstitle{Название фанфика}
+\providecommand*{\fbstitle}[3][]%
 {%
 	\ifthenelse{\equal{#1}{}}{%
 		\renewcommand*{\fbs@TitleColontitulBox}{#2}%
@@ -776,62 +822,64 @@
 	\renewcommand*{\fbs@FicLinkBox}{#3}%
 }
 
-%	\fbtitlefnt{Название фанфика}{Сноска}
-\providecommand{\fbtitlefnt}[4][]%
+%	\fbstitlefnt{Название фанфика}{Сноска}
+\providecommand{\fbstitlefnt}[4][]%
 {%
-	\fbtitle[#1]{#2}{#3}%
+	\fbstitle[#1]{#2}{#3}%
 	\renewcommand*{\fbs@TitleFootnoteBox}{#4}%
 }
 
-% \fbauthors{Имя автора(-ов) (c URL-адресами на их страницы)
-\providecommand*{\fbauthors}[2]
+% \fbsauthors{Имя автора(-ов) (c URL-адресами на их страницы)
+\providecommand*{\fbsauthors}[2]
 {\readarray{fbs@AuthorsBox}{#1}\readarray{fbs@AuthorsLinkBox}{#2}}		
 
-% \fbtranslators{Имя переводчика(-ов)}
-\providecommand*{\fbtranslators}[2]
+% \fbstranslators{Имя переводчика(-ов)}
+\providecommand*{\fbstranslators}[2]
 {\readarray{fbs@TranslatorsBox}{#1}\readarray{fbs@TranslatorsLinkBox}{#2}}
 
-%\fbbetas{Беты}
-\providecommand*{\fbbetas}[2]
+%\fbsbetas{Беты}
+\providecommand*{\fbsbetas}[2]
 {\readarray{fbs@BetasBox}{#1}\readarray{fbs@BetasLinkBox}{#2}}
 
-%\fbgammas{Гаммы}
-\providecommand*{\fbgammas}[2]
+%\fbsgammas{Гаммы}
+\providecommand*{\fbsgammas}[2]
 {\readarray{fbs@GammasBox}{#1}\readarray{fbs@GammasLinkBox}{#2}}
 
-% \fbfandom{фэндом(-ы)}
-\providecommand*{\fbfandom}[1]
+% \fbsfandom{фэндом(-ы)}
+\providecommand*{\fbsfandom}[1]
 {\readarray{fbs@FandomBox}{#1}}			
 
 % Персонажи
-\providecommand*{\fbcharacters}[1]
+\providecommand*{\fbscharacters}[1]
 {\readarray{fbs@CharactersBox}{#1}}
 
 % Пейринг                  
-\providecommand*{\fbpairings}[1]
+\providecommand*{\fbspairings}[1]
 {\readarray{fbs@PairingBox}{#1}}
 
-% \fbrating{G / PG-13 / NC-17 / NC-21 / R}
-\providecommand*{\fbrating}[1]
+% \fbsrating{G / PG-13 / NC-17 / NC-21 / R}
+\providecommand*{\fbsrating}[1]
 {\readarray{fbs@RatingBox}{#1}}
 
-% \fbgenres{Жанры}
-\providecommand*{\fbgenres}[1]
+% \fbsgenres{Жанры}
+\providecommand*{\fbsgenres}[1]
 {\readarray{fbs@GenresBox}{#1}}			
 
-% \fbwarnings{Предупреждения}
-\providecommand*{\fbwarnings}[1]
+% \fbswarnings{Предупреждения}
+\providecommand*{\fbswarnings}[1]
 {\readarray{fbs@WarningsBox}{#1}}
 
-% \fbwarnings{Метки}
-\providecommand*{\fbmarks}[1]
+% \fbswarnings{Метки}
+\providecommand*{\fbsmarks}[1]
 {\readarray{fbs@MarksBox}{#1}}
 
 % Подсчёт страниц
-\newarray\fbs@PageSuffix%
-\readarray{fbs@PageSuffix}{&а&ы&ы&ы&&&&&&&&&&&&&&&&}%
+\newarray\fbs@PageSuffixRus
+\readarray{fbs@PageSuffixRus}{&а&ы&ы&ы&&&&&&&&&&&&&&&&}%
+\newarray\fbs@PageSuffixEng
+\readarray{fbs@PageSuffixEng}{&&s&s&s&s&s&s&s&s&s&s&s&s&s&s&s&s&s&s&s}%
 
-\providecommand*{\fbsize}[1]%
+\providecommand*{\fbssize}[1]%
 {%
 	\makeatletter
 	\renewcommand*{\fbs@SizeBox}%
@@ -845,9 +893,12 @@
 					\let\fbs@TotPages@temp=\fbs@TotPages@getNum
 				\fi
 			\fi
-			#1,\ \fbs@TotPages@getNum\ страниц%
+			#1,\ \fbs@TotPages@getNum\ 
+			\iflanguage{russian}{страниц}{}%
+			\iflanguage{english}{page}{}%
 			\ADD{\fbs@TotPages@temp}{1}{\fbs@TotPages@temp}%
-			\fbs@PageSuffix(\fbs@TotPages@temp)%
+			\iflanguage{russian}{\fbs@PageSuffixRus(\fbs@TotPages@temp)}{}%
+			\iflanguage{english}{\fbs@PageSuffixEng(\fbs@TotPages@temp)}{}%
 		}%
 		\makeatother
 	}%
@@ -871,66 +922,67 @@
 	\makeatother
 }%
 
-%% У команды \fbstatus есть один аргумент --- целое число:
+%% У команды \fbsstatus есть один аргумент --- целое число:
 %% 1 --- в процессе;
 %% 2 --- заморожен;
 %% 3 --- завершён.
-\providecommand*{\fbstatus}[1]%
+\providecommand*{\fbsstatus}[1]%
 {%
-	\renewcommand*{\fbs@StatusBox}%
-	{%
-		\ifthenelse{\equal{#1}{1}}%
-		{%
-			\textcolor{red}{в~процессе}%
-		}%
-		{%
-			\ifthenelse{\equal{#1}{2}}%
-			{%
-				\textcolor{blue}{заморожен}%
+	\renewcommand*{\fbs@StatusBox}{%
+		\ifnum #1=1
+			{\color{red}%
+				\iflanguage{russian}{в~процессе}{}%
+				\iflanguage{english}{in~progress}{}%
 			}%
-			{%
-				\ifthenelse{\equal{#1}{3}}%
-				{%
-					\textcolor[rgb]{0,0.58,0}{завершён}%
+			\else\ifnum #1=2
+				{\color{blue}%
+					\iflanguage{russian}{заморожен}{}%
+					\iflanguage{english}{frozen}{}%
 				}%
-				{%
-					неверный параметр%
-				}%
-			}%
-		}%
+				\else\ifnum #1=3
+					{\color[rgb]{0,0.58,0}%
+						\iflanguage{russian}{завершён}{}%
+						\iflanguage{english}{completed}{}%
+					}%
+				\else
+					\iflanguage{russian}{неверный параметр}{}%
+					\iflanguage{english}{wrong parameter}{}%
+				\fi
+			\fi
+		\fi
 	}%
 }
 
-% \fbdescription{Описание}
-\providecommand{\fbdescription}[1]%
+% \fbsdescription{Описание}
+\providecommand{\fbsdescription}[1]%
 {\renewcommand{\fbs@DescriptionBox}{#1}}
 
-% \fbdedication{Посвящение}
-\providecommand{\fbdedication}[1]%
+% \fbsdedication{Посвящение}
+\providecommand{\fbsdedication}[1]%
 {\renewcommand{\fbs@DedicationBox}{#1}}
 
-% \fbpublication{Публикация на других ресурсах}
-\providecommand{\fbpublication}[1]%
+% \fbspublication{Публикация на других ресурсах}
+\providecommand{\fbspublication}[1]%
 {\renewcommand{\fbs@PublicationBox}{#1}}
 
-% \fbauthorsComments{Комментарии автора}
-\providecommand{\fbauthorscomments}[1]%
+% \fbsauthorsComments{Комментарии автора}
+\providecommand{\fbsauthorscomments}[1]%
 {\renewcommand{\fbs@AuthorsCommentsBox}{#1}}
 
-% \fbauthorsnotes{Author's Notes}
-\providecommand{\fbauthorsnotes}[1]%
+% \fbsauthorsnotes{Author's Notes}
+\providecommand{\fbsauthorsnotes}[1]%
 {\renewcommand{\fbs@AuthorsNotesBox}{#1}}
 
-% \fbnotes{Notes}
-\providecommand{\fbnotes}[1]%
-{\fbauthorsnotes{#1}}
+% \fbsnotes{Notes}
+\providecommand{\fbsnotes}[1]%
+{\fbsauthorsnotes{#1}}
 
-% \fbsummary{Summary}
-\providecommand{\fbsummary}[1]%
+% \fbssummary{Summary}
+\providecommand{\fbssummary}[1]%
 {\renewcommand{\fbs@SummaryBox}{#1}}
 
-% \fbdirection{Направленность}
-\providecommand*{\fbdirection}[1]%
+% \fbsdirection{Направленность}
+\providecommand*{\fbsdirection}[1]%
 {\renewcommand{\fbs@DirectionBox}{#1}}
 
 % ==============================================
@@ -942,10 +994,10 @@
 % Почему не нужна эта команда?
 %\renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
 
-% \providecommand*{\fbsection}[1]%
+% \providecommand*{\fbssection}[1]%
 % {\chapter*{#1}\addcontentsline{toc}{section}{#1}\markboth{#1}{}\stepcounter{fbs@TotSections@cnt}}
 
-\providecommand*{\fbsection}[2][]{%
+\providecommand*{\fbssection}[2][]{%
 	\clearpage%
 	\thispagestyle{plain}%
 	%\rule{0pt}{0pt}%
@@ -977,26 +1029,66 @@
 	\stepcounter{fbs@TotSections@cnt}%
 }
 
-%\providecommand*{\fbsection}[1]
+%\providecommand*{\fbssection}[1]
 %{\section*{#1}\addcontentsline{toc}{section}{#1}\markright{#1}\stepcounter{fbs@TotSections@cnt}}%
 
 
-\providecommand*{\fbsubsection}[1]
+\providecommand*{\fbssubsection}[1]%
 {\subsection*{#1}\addcontentsline{toc}{subsection}{#1}\markboth{#1}{}}
 
-\providecommand*{\fbsubsubsection}[1]
+\providecommand*{\fbssubsubsection}[1]%
 {\subsubsection*{#1}}
 
-\providecommand*{\fbparagraph}[1]
+\providecommand*{\fbsparagraph}[1]%
 {\paragraph*{#1}}
 
-\providecommand*{\fbsubparagraph}[1]
+\providecommand*{\fbssubparagraph}[1]%
 {\subparagraph*{#1}}
 
-% =================================================
+% =============================	Шапка и сведения ================================
+
+\newcommand{\fbs@printnoindentitem}[4][]{%
+	\ifthenelse{\equal{\csname #4\endcsname}{}}{}{%
+		\begingroup
+			\noindent
+			\hangindent=1\parindent
+			{\bfseries
+				\iflanguage{russian}{#2}{}%
+				\iflanguage{english}{#3}{}%
+			}%
+			\csname #4\endcsname
+			% \par
+		\endgroup
+	}%
+}
+
+\newlength{\saveparindent}
+\setlength{\saveparindent}{\parindent}
+
+\newcommand{\fbs@printnoindentitempar}[3]{%
+	\ifthenelse{\equal{\csname #3\endcsname}{}}{}%
+	{%
+		\medskip
+		\noindent
+		{\bfseries
+			\iflanguage{russian}{#1}{}%
+			\iflanguage{english}{#2}{}%
+			\par
+		}%
+		\addpenalty{10000}%
+		\begingroup
+			%\setlength{\parindent}{0pt}
+			\everypar{\hangindent=1\saveparindent}
+			% \setlength{\parskip}{\medskipamount}
+			\csname #3\endcsname
+			% \expandafter\fbs@preprint{\csname #3\endcsname}%
+			\par
+		\endgroup
+	}%
+}
 
 % Печать заголовка
-\providecommand{\fbmaketitle}
+\providecommand{\fbsmaketitle}
 {%
 %	\inputencoding{utf8}
 	\makeatletter%
@@ -1034,98 +1126,201 @@
 	\vspace{30pt}%
 	%
 	%
-	\fbs@CustomItem{fbs@AuthorsBox}{\fbs@AuthorsBoxSingle}{\fbs@AuthorsBoxPlural}%
+	\fbs@CustomItem{fbs@AuthorsBox}{%
+		% \fbs@AuthorsBoxSingle
+		\iflanguage{russian}{Автор}{}%
+		\iflanguage{english}{Author}{}%
+	}{%
+		% \fbs@AuthorsBoxPlural
+		\iflanguage{russian}{Авторы}{}%
+		\iflanguage{english}{Authors}{}%
+	}%
 	\fbs@PrintItemTwo[\\]{fbs@AuthorsBox}{fbs@AuthorsLinkBox}
 
-	\fbs@CustomItem{fbs@TranslatorsBox}{Переводчик}{Переводчики}%
+	\fbs@CustomItem{fbs@TranslatorsBox}{%
+		\iflanguage{russian}{Переводчик}{}%
+		\iflanguage{english}{Translator}{}%
+	}{%
+		\iflanguage{russian}{Переводчики}{}%
+		\iflanguage{english}{Translators}{}%
+	}%
+
 	\fbs@PrintItemTwo[\\]{fbs@TranslatorsBox}{fbs@TranslatorsLinkBox}
 
-	\fbs@CustomItem{fbs@BetasBox}{Бета}{Беты}%
+	\fbs@CustomItem{fbs@BetasBox}{%{Бета}{Беты}%
+		\iflanguage{russian}{Бета}{}%
+		\iflanguage{english}{Beta}{}%
+	}{%
+		\iflanguage{russian}{Беты}{}%
+		\iflanguage{english}{Betas}{}%
+	}%
+
 	\fbs@PrintItemTwo{fbs@BetasBox}{fbs@BetasLinkBox}
 
-	\fbs@CustomItem{fbs@GammasBox}{Гамма}{Гаммы}%
+	% \fbs@CustomItem{fbs@GammasBox}{Гамма}{Гаммы}%
+	\fbs@CustomItem{fbs@GammasBox}{%
+		\iflanguage{russian}{Гамма}{}%
+		\iflanguage{english}{Gamma}{}%
+	}{%
+		\iflanguage{russian}{Гаммы}{}%
+		\iflanguage{english}{Gammas}{}%
+	}%
+
 	\fbs@PrintItemTwo{fbs@GammasBox}{fbs@GammasLinkBox}
 	
-	\fbs@CustomItem{fbs@FandomBox}{Фэндом}{Фэндомы}%
+	% \fbs@CustomItem{fbs@FandomBox}{Фэндом}{Фэндомы}%
+	\fbs@CustomItem{fbs@FandomBox}{%
+		\iflanguage{russian}{Фэндом}{}%
+		\iflanguage{english}{Fandom}{}%
+	}{%
+		\iflanguage{russian}{Фэндомы}{}%
+		\iflanguage{english}{Fandoms}{}%
+	}%
 	\fbs@PrintItem{fbs@FandomBox}%
 	\checkfbs@FandomBox(2)%
 	\ifthenelse{\boolean{emptydata}}{}%
 	{%
-		\ (кроссовер)%
+		\ 
+		(%
+			\iflanguage{russian}{кроссовер}{}%
+			\iflanguage{english}{crossover}{}%
+		)%
 	}%
 	
-	\fbs@CustomItem{fbs@CharactersBox}{Основные персонажи}{Основные персонажи}%
+	%\fbs@CustomItem{fbs@CharactersBox}{Основные персонажи}{Основные персонажи}%
+	\fbs@CustomItem{fbs@CharactersBox}{%
+		\iflanguage{russian}{Основные персонажи}{}%
+		\iflanguage{english}{Main characters}{}%
+	}{%
+		\iflanguage{russian}{Основные персонажи}{}%
+		\iflanguage{english}{Main characters}{}%
+	}%
 	\fbs@PrintItem{fbs@CharactersBox}
 
-	\fbs@CustomItem{fbs@PairingBox}{Пэйринг}{Пэйринги}%
+	% \fbs@CustomItem{fbs@PairingBox}{Пэйринг}{Пэйринги}%
+	\fbs@CustomItem{fbs@PairingBox}{%
+		\iflanguage{russian}{Пейринг}{}%
+		\iflanguage{english}{Pairing}{}%
+	}{%
+		\iflanguage{russian}{Пейринги}{}%
+		\iflanguage{english}{Pairings}{}%
+	}%
 	\fbs@PrintItem{fbs@PairingBox}
 
-	\fbs@CustomItem{fbs@RatingBox}{Рейтинг}{Рейтинги}%
+	% \fbs@CustomItem{fbs@RatingBox}{Рейтинг}{Рейтинги}%
+	\fbs@CustomItem{fbs@RatingBox}{%
+		\iflanguage{russian}{Рейтинг}{}%
+		\iflanguage{english}{Rating}{}%
+	}{%
+		\iflanguage{russian}{Рейтинг}{}%
+		\iflanguage{english}{Rating}{}%
+	}%
 	\fbs@PrintItem{fbs@RatingBox}
 
-	\fbs@CustomItem{fbs@GenresBox}{Жанр}{Жанры}%
+	\fbs@CustomItem{fbs@GenresBox}{%
+		\iflanguage{russian}{Жанр}{}%
+		\iflanguage{english}{Genre}{}%
+	}{%
+		\iflanguage{russian}{Жанры}{}%
+		\iflanguage{english}{Genres}{}%
+	}%
 	\fbs@PrintItem{fbs@GenresBox}
 
-	\fbs@CustomItem{fbs@WarningsBox}{Предупреждения}{Предупреждения}%
+	% \fbs@CustomItem{fbs@WarningsBox}{Предупреждения}{Предупреждения}%
+	\fbs@CustomItem{fbs@WarningsBox}{%
+		\iflanguage{russian}{Предупреждение}{}%
+		\iflanguage{english}{Warning}{}%
+	}{%
+		\iflanguage{russian}{Предупреждения}{}%
+		\iflanguage{english}{Warnings}{}%
+	}%
 	\fbs@PrintItem{fbs@WarningsBox}
 
+
 %	\ifthenelse{\equal{\fbs@SizeBox}{}}{}%
-	{\noindent\textbf{Размер: }\fbs@SizeBox\par}
+	% {\noindent\textbf{Размер: }\fbs@SizeBox\par}
+	% \fbs@printnoindentitem{Размер: }{Size: }{fbs@sizeBox}
+	{\noindent\textbf{\iflanguage{russian}{Размер: }{}\iflanguage{english}{Size: }{}}\fbs@SizeBox\par}
 
 %	\ifthenelse{\equal{\PartsNumBox}{}}{}%
-	{\noindent\textbf{Количество частей: }\fbs@PartsNumBox\par}
+	% {\noindent\textbf{Количество частей: }\fbs@PartsNumBox\par}
+	\fbs@printnoindentitem{Количество частей: }{Number of parts: }{fbs@PartsNumBox}
 
 	%\ifthenelse{\equal{\St@usBox}{}}{}%
-	{\noindent\textbf{Статус: \fbs@StatusBox}\par}
+	% {\noindent\textbf{Статус: \fbs@StatusBox}\par}
+	\fbs@printnoindentitem{Статус: }{Status: }{fbs@StatusBox}
 
-	\ifthenelse{\equal{\fbs@DirectionBox}{}}{}%
-	{%
-		\noindent
-		\textbf{Direction:}
-		\fbs@DirectionBox%
-		\par
-	}%
+	% \ifthenelse{\equal{\fbs@DirectionBox}{}}{}%
+	% {%
+	% 	\noindent
+	% 	\textbf{Direction:}
+	% 	\fbs@DirectionBox%
+	% 	\par
+	% }%
+	\fbs@printnoindentitem{Направленность: }{Direction: }{fbs@DirectionBox}
+
+	% \ifthenelse{\equal{\fbs@DescriptionBox}{}}{}%
+	% {\medskip\noindent\textbf{Описание:}%
+	% \par%
+	% \addpenalty{10000}%
+	% \fbs@DescriptionBox\par}
+	\fbs@printnoindentitempar{Описание:}{Description:}{fbs@DescriptionBox}
 		
-	\ifthenelse{\equal{\fbs@DescriptionBox}{}}{}%
-	{\medskip\noindent\textbf{Описание:}%
-	\par%
-	\addpenalty{10000}%
-	\fbs@DescriptionBox\par}
+	% \ifthenelse{\equal{\fbs@DedicationBox}{}}{}%
+	% {\medskip\noindent\textbf{Посвящение:}%
+	% \par%
+	% \addpenalty{10000}%
+	% \fbs@DedicationBox\par}
+	\fbs@printnoindentitempar{Посвящение:}{Dedication:}{fbs@DedicationBox}
 		
-	\ifthenelse{\equal{\fbs@DedicationBox}{}}{}%
-	{\medskip\noindent\textbf{Посвящение:}%
-	\par%
-	\addpenalty{10000}%
-	\fbs@DedicationBox\par}
-		
-	\ifthenelse{\equal{\fbs@PublicationBox}{}}{}%
-	{\medskip\noindent\textbf{Публикация на других ресурсах:}%
-	\par%
-	\addpenalty{10000}%
-	\fbs@PublicationBox\par}
+	% \ifthenelse{\equal{\fbs@PublicationBox}{}}{}%
+	% {\medskip\noindent\textbf{Публикация на других ресурсах:}%
+	% \par%
+	% \addpenalty{10000}%
+	% \fbs@PublicationBox\par}
+	\fbs@printnoindentitempar{%
+		Публикация на других ресурсах:%
+	}{%
+		Publication on other resources:%
+	}{fbs@PublicationBox}
 	
-	\ifthenelse{\equal{\fbs@AuthorsCommentsBox}{}}{}%
-	{\medskip\noindent\textbf{Примечания автора:}%
-	\par%
-	\addpenalty{10000}%
-	\fbs@AuthorsCommentsBox\par}
+	% \ifthenelse{\equal{\fbs@AuthorsCommentsBox}{}}{}%
+	% {\medskip\noindent\textbf{Примечания автора:}%
+	% \par%
+	% \addpenalty{10000}%
+	% \fbs@AuthorsCommentsBox\par}
+	\fbs@printnoindentitempar{%
+		Примечания автора:%
+	}{%
+		Author's Comments:%
+	}{fbs@AuthorsCommentsBox}
 
-	\ifthenelse{\equal{\fbs@AuthorsNotesBox}{}}{}%
-	{\medskip\noindent\textbf{Author's Notes:}%
-	\par%
-	\addpenalty{10000}%
-	\fbs@AuthorsNotesBox\par}
+	% \ifthenelse{\equal{\fbs@AuthorsNotesBox}{}}{}%
+	% {\medskip\noindent\textbf{Author's Notes:}%
+	% \par%
+	% \addpenalty{10000}%
+	% \fbs@AuthorsNotesBox\par}
+	\fbs@printnoindentitempar{%
+		Заметки автора:%
+	}{%
+		Author's Notes:%
+	}{fbs@AuthorsNotesBox}
 
-	\ifthenelse{\equal{\fbs@SummaryBox}{}}{}%
-	{\medskip\noindent\textbf{Summary:}%
-	\par%
-	\addpenalty{10000}%
-	\fbs@SummaryBox\par}
-
-	\clearpage%
-	\makeatletter%
+	% \ifthenelse{\equal{\fbs@SummaryBox}{}}{}%
+	% {\medskip\noindent\textbf{Summary:}%
+	% \par%
+	% \addpenalty{10000}%
+	% \fbs@SummaryBox\par}
+	\fbs@printnoindentitempar{%
+		Summary:%
+	}{%
+		Summary:%
+	}{fbs@SummaryBox}
+	\par
+	\clearpage
+	\makeatletter
 	%\fbs@setpagestyle%
-	\pagestyle{empty}%
+	\pagestyle{empty}
 	\if@fbs@firstCompilation@
 		\fbs@maketoc
 	\fi
@@ -1134,12 +1329,12 @@
 		\fbs@maketoc
 	\fi
 %	\fbs@maketoc
-	\fbs@setpagestyle%
+	\fbs@setpagestyle
 	\makeatother%	
 	\setcounter{page}{1}%
 %	\inputencoding{\fbs@encoding}
 }
-
+%
 \newcommand*{\fbs@maketoc}%
 {%
 	\mal
@@ -1148,14 +1343,16 @@
 	\tableofcontents
 	\clearpage
 }
-
-\newcommand*{\fbepauthorbox}{}
-\newcommand*{\fbepauthor}[1]{\renewcommand*{\fbepauthorbox}{#1}}
-\newenvironment{fbepigraph}[1]
+%
+\newcommand*{\fbsepauthorbox}{}
+\newcommand*{\fbsepauthor}[1]{%
+	\renewcommand*{\fbsepauthorbox}{#1}%
+}
+\newenvironment{fbsepigraph}[1]
 {%	
 	\ifthenelse{\equal{#1}{}}{}%
 	{%
-		\fbepauthor{#1}
+		\fbsepauthor{#1}
 	}
 	\par\begin{flushright}%
 		\begin{minipage}{0.45\linewidth}%
@@ -1165,29 +1362,29 @@
 	\addvspace{\bigskipamount}%
 	\addpenalty{10000}%
 	\hrule%
-%	\begin{flushright}\textsl{\fbepauthor}\end{flushright}%
+%	\begin{flushright}\textsl{\fbsepauthor}\end{flushright}%
 	\addpenalty{10000}%
 	\addvspace{\medskipamount}%
 	\addpenalty{10000}%
 	\hfill%
-	\textsl{\fbepauthorbox}%
+	\textsl{\fbsepauthorbox}%
 	\end{minipage}\end{flushright}\par%
-	\renewcommand{\fbepauthor}[1]{}%
+	\renewcommand{\fbsepauthor}[1]{}%
 }
 
 
-\newcommand*{\fbsignaturebox}{}
-\newcommand{\fbsignature}[1]{\renewcommand*{\fbsignaturebox}{#1}}
-\newenvironment{fbhandwritten}
+\newcommand*{\fbssignaturebox}{}
+\newcommand{\fbssignature}[1]{\renewcommand*{\fbssignaturebox}{#1}}
+\newenvironment{fbshandwritten}
 {%
 	\par%
 	\addvspace{\bigskipamount}%
 	\itshape%
 }
 {%
-	\ifthenelse{\equal{\fbsignaturebox}{}}{}{%
+	\ifthenelse{\equal{\fbssignaturebox}{}}{}{%
 		\par\noindent%
-		\hspace*{\fill}\fbsignaturebox%
+		\hspace*{\fill}\fbssignaturebox%
 	}%
 	\par%
 	\addvspace{\bigskipamount}%
@@ -1195,12 +1392,15 @@
 }
 
 \newcommand{\epigraph}[2]{%
-	\begin{fbepigraph}{#2}
+	\begin{fbsepigraph}{#2}
 		#1
-	\end{fbepigraph}%
+	\end{fbsepigraph}%
 }
 
-\newenvironment{fbremark}[1][Примечание к части.]%
+\newenvironment{fbsremark}[1][%
+	\iflanguage{russian}{Примечание к части.}{}%
+	\iflanguage{english}{Note.}{}%
+]%
 {%
 	\addvspace{\bigskipamount}%
 	\par%
@@ -1212,7 +1412,7 @@
 	%\indent
 	\nopagebreak[4]%
 	\makeatletter%
-	\hangindent=\fbs@indent
+	\hangindent=1\fbs@indent
 	\makeatother%
 }%
 {%
@@ -1220,9 +1420,14 @@
 	\addvspace{\bigskipamount}%
 }
 
+\newenvironment{fbremark}[1][%
+	\iflanguage{russian}{Примечание к части.}{}%
+	\iflanguage{english}{Note.}{}%
+]{\begin{fbsremark}}{\end{fbsremark}}
+
 % \usefont{ENC}{family}{series}{shape}
 % \selectfont
-\newenvironment{fbitalic}%
+\newenvironment{fbsitalic}%
 {%
 	\normalfont\itshape
 }%
@@ -1230,7 +1435,7 @@
 	\normalfont
 }
 
-\newenvironment{fbbold}%
+\newenvironment{fbsbold}%
 {%
 	\normalfont\bfseries
 }%
@@ -1238,7 +1443,7 @@
 	\normalfont
 }
 
-\newenvironment{fbupright}%
+\newenvironment{fbsupright}%
 {%
 	\normalfont\rmfamily
 }%
@@ -1390,7 +1595,7 @@
 	% 	\fuzzy
 
 	% \sloppy
-	\fbs@russiantrue
+	% \fbs@russiantrue
 }
 
 \AtEndDocument%
@@ -1398,14 +1603,14 @@
 	\makeatletter%
 	\immediate\write\@mainaux%
 	{%
-		\string\gdef\string\fbs@TotPages@getNum{\number\value{page}}
-		\string\gdef\string\fbs@TotSections@getNum{\number\value{fbs@TotSections@cnt}}
+		\string\gdef\string\fbs@TotPages@getNum{\number\value{page}}\par
+		\string\gdef\string\fbs@TotSections@getNum{\number\value{fbs@TotSections@cnt}}\par
 		\ifnum \number\value{fbs@TotSections@cnt}>0%
-			\string\global\string\@fbs@existsSecondSection@true
+			\string\global\string\@fbs@existsSecondSection@true\par
 		\else
-			\string\global\string\@fbs@existsSecondSection@false
+			\string\global\string\@fbs@existsSecondSection@false\par
 		\fi
-		\string\global\string\@fbs@firstCompilation@false
+		\string\global\string\@fbs@firstCompilation@false\par
 	}
 	\makeatother%
 }
@@ -1419,9 +1624,9 @@
 
 \global\makeatother
 
-\newcommand*{\when}[1]{%
+\newcommand{\when}[1]{%
 	\addvspace{1\baselineskip}%
-	\textit{#1}%
+	{\itshape #1}%
 	\par%
 	\addvspace{0.79\baselineskip}%
 }%
@@ -1458,14 +1663,38 @@
 	}%
 }
 
-\newcommand*{\langnameen}{англ.}
-\newcommand*{\Langnameen}{Англ.}
-\newcommand*{\langnameru}{рус.}
-\newcommand*{\Langnameru}{Рус.}
-\newcommand*{\langnamede}{нем.}
-\newcommand*{\Langnamede}{Нем.}
-\newcommand*{\langnamefr}{фр.}
-\newcommand*{\LangnameFr}{Фр.}
+\newcommand*{\langnameen}{%
+	\iflanguage{russian}{англ.}{}%
+	\iflanguage{english}{eng.}{}%
+}
+\newcommand*{\Langnameen}{%
+	\iflanguage{russian}{Англ.}{}%
+	\iflanguage{english}{Eng.}{}%
+}
+\newcommand*{\langnameru}{%
+	\iflanguage{russian}{рус.}{}%
+	\iflanguage{english}{rus.}{}%
+}
+\newcommand*{\Langnameru}{%
+	\iflanguage{russian}{Рус.}{}%
+	\iflanguage{english}{Rus.}{}%
+}
+\newcommand*{\langnamede}{%
+	\iflanguage{russian}{нем.}{}%
+	\iflanguage{english}{deut.}{}%
+}
+\newcommand*{\Langnamede}{%
+	\iflanguage{russian}{Нем.}{}%
+	\iflanguage{english}{Deut.}{}%
+}
+\newcommand*{\langnamefr}{%
+	\iflanguage{russian}{фр.}{}%
+	\iflanguage{english}{fr.}{}%
+}
+\newcommand*{\LangnameFr}{%
+	\iflanguage{russian}{Фр.}{}%
+	\iflanguage{english}{Fr.}{}%
+}
 
 \mal
 
@@ -1506,7 +1735,11 @@
 
 \mao
 
-\let\fbnewsection=\fbsection
+\let\fbsnewsection=\fbssection
+\let\fbsection=\fbssection
+\let\fbsubsection=\fbssubsection
+\let\fbsubsubsection=\fbssubsubsection
+\let\fbsubparagraph=\fbssubparagraph
 
 \newcommand{\sms}[1]{%
 	\begin{quote}
@@ -1515,6 +1748,47 @@
 	\end{quote}%
 }
 
-\newcommand{\interlude}[1]{\par\addvspace{\medskipamount}{\itshape #1}\par\nopagebreak\addvspace{\medskipamount}}
+\newcommand{\interlude}[1]{%
+	\par
+	\addvspace{\medskipamount}%
+	{\itshape
+		#1%
+	\par}%
+	\nopagebreak
+	\addvspace{\medskipamount}%
+}
+
+\newcommand*{\myhref}[3][]{%
+	\href[#1]{#2}{#3}%
+	\protect\footnote{\url{#2}}%
+}
+
+\let\fnhref=\myhref
+
+\renewcommand*{\thefootnote}{%
+	\arabic{footnote})%
+}
+
+\makeatletter
+
+\newcommand*{\redact}[1]{%
+	\iffbs@redacton
+		\footnote{%
+			#1%
+			. --- \textit{Прим. ред.}\par
+		}%
+	\fi
+}
+
+\newcommand{\corr}[2]{%
+	\iffbs@redacton
+		{\color{myredactwrong}\so{#1}}%
+		{\color{myredactcorrect}#2}%
+	\else
+		#1%
+	\fi
+}
+
+\makeatother
 
 % vim:ts=2:sw=2:nolist
