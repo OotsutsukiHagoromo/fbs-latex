@@ -121,6 +121,7 @@
 % Контейнеры для текста в виде команд и массивов. Инициализация пустой строкой:
 
 \newcommand*{\fb@TitleBox}{}
+\newcommand*{\fb@TitleBox@header}{}
 \newcommand*{\fb@FicLinkBox}{}
 %
 \newarray\fb@AuthorsBox
@@ -180,7 +181,7 @@
 						\normalfont\strut\thepage\hfil\slshape\leftmark\normalfont%
 					\else
 					%	\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
-						\normalfont\strut\scshape\fb@TitleBox\normalfont\hfil\thepage\normalfont%
+						\normalfont\strut\scshape\fb@TitleBox@header\normalfont\hfil\thepage\normalfont%
 					\fi
 					%\normalfont\strut\slshape\rightmark\normalfont\hfil\thepage%
 				}%
@@ -198,9 +199,9 @@
 				\hbox to \textwidth%
 				{%
 					\if@fb@existsSecondSection@
-						\normalfont\strut\scshape\fb@TitleBox\normalfont\hfil\thepage\normalfont%
+						\normalfont\strut\scshape\fb@TitleBox@header\normalfont\hfil\thepage\normalfont%
 					\else
-						\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
+						\normalfont\strut\thepage\hfil\scshape\fb@TitleBox@header\normalfont%
 					\fi
 				}%
 				\hrule
@@ -297,8 +298,16 @@
 % ==============================================================================
 
 %	\fbtitle{Название фанфика}
-\providecommand*{\fbtitle}[2]
-{\renewcommand*{\fb@TitleBox}{#1}\renewcommand*{\fb@FicLinkBox}{#2}}
+\providecommand*{\fbtitle}[3][]%
+{%
+	\ifthenelse{\equal{#1}{}}{%
+		\renewcommand*{\fb@TitleBox@header}{#2}%
+	}{%
+		\renewcommand*{\fb@TitleBox@header}{#1}%
+	}
+	\renewcommand*{\fb@TitleBox}{#2}%
+	\renewcommand*{\fb@FicLinkBox}{#3}%
+}
 
 % \fbauthors{Имя автора(-ов) (c URL-адресами на их страницы)
 \providecommand*{\fbauthors}[2]
@@ -758,10 +767,3 @@
 %\inputencoding{\fb@encoding}
 
 \global\makeatother
-
-\newcommand*{\when}[1]{%
-	\addvspace{1\baselineskip}%
-	\textit{#1}%
-	\par%
-	\addvspace{0.79\baselineskip}%
-}%
