@@ -1,0 +1,244 @@
+%%	Стилевой пакет LaTeX, разработанный для конвертирования фанфиков с сайта ficbook.net в формат pdf.
+%%	
+%%	Rikudo_Sannin, 2016
+
+\ProvidesPackage{fbs}
+
+\RequirePackage[utf8]{inputenc}
+\RequirePackage{indentfirst}
+\RequirePackage{ifthen}		% Конструкция if-then-else: ifthenelse{<условие>}{<действия, если истинно>}{<действия, если ложно>}
+\RequirePackage{color}
+
+%\RequirePackage{hyperref}	% Для ссылок
+%\hypersetup{colorlinks=true, urlcolor=blue}
+
+\RequirePackage{lastpage}	% Для подсчёта количества страниц
+\RequirePackage[top = 2.5cm, bottom = 2.5cm , left = 2.5cm, right = 2.5cm]{geometry}
+
+%\RequirePackage{pscyr}
+
+\RequirePackage[russian]{babel}
+
+% Контейнеры для текста в виде команд. Инициализация пустой строкой:
+\newcommand*{\titleBox}{}
+\newcommand*{\fanlinkBox}{}
+\newcommand*{\authorsBox}{}
+\newcommand*{\authorslinkBox}{}
+\newcommand*{\translatorsBox}{}
+\newcommand*{\betasBox}{}
+\newcommand*{\fandomBox}{}
+\newcommand*{\charactersBox}{}
+\newcommand*{\ratingBox}{}
+\newcommand*{\genresBox}{}
+\newcommand*{\warningsBox}{}
+\newcommand*{\sizeBox}{}
+\newcommand*{\partsNumBox}{}
+\newcommand*{\statusBox}{}
+\newcommand{\descriptionBox}{}
+\newcommand{\dedicationBox}{}
+\newcommand{\publicationBox}{}
+\newcommand{\authorsCommentsBox}{}
+%\newcommand{}{}
+
+%%	Команды, исользуемые в LaTeX-документе. Например, команда
+%%		\fbtitle{Надо назвать поинтереснее}
+%%	сообщит пакету, что название фанфика --- "Надо назвать поинтереснее".
+%%	Эти команды ничего не выводят на печать --- они дают информацию для команды \maketitle (см. далее).
+
+%	\fbtitle{Название фанфика}
+\providecommand*{\fbtitle}[1]
+{\renewcommand*{\titleBox}{#1}}				
+
+%	\fbfanlink{Ссылка на фанфик}
+\providecommand*{\fbfanlink}[1]
+{\renewcommand*{\fanlinkBox}{#1}}				
+
+% \fbauthors{Имя автора(-ов) (c URL-адресами на их страницы)
+\providecommand*{\fbauthors}[1]
+{\renewcommand*{\authorsBox}{#1}}		
+
+\providecommand*{\fbauthorslink}[1]
+{\renewcommand*{\authorslinkBox}{#1}}			
+
+% \fbtranslators{Имя переводчика(-ов)}
+\providecommand*{\fbtranslators}[1]
+{\renewcommand*{\translatorsBox}{#1}}
+
+%\fbtranslators{Беты}
+\providecommand*{\fbbetas}[1]
+{\renewcommand*{\betasBox}{#1}}
+
+% \fbfandom{фэндом(-ы)}
+\providecommand*{\fbfandom}[1]
+{\renewcommand*{\fandomBox}{#1}}			
+
+% Персонажи
+\providecommand*{\fbcharacters}[1]
+{\renewcommand*{\charactersBox}{#1}}
+
+% \fbrating{G / PG-13 / NC-17 / NC-21 / R}
+\providecommand*{\fbrating}[1]
+{\renewcommand*{\ratingBox}{#1}}
+
+% \fbgenres{Жанры}
+\providecommand*{\fbgenres}[1]
+{\renewcommand*{\genresBox}{#1}}			
+
+% \fbwarnings{Предупреждения}
+\providecommand*{\fbwarnings}[1]
+{\renewcommand*{\warningsBox}{#1}}
+
+% \fbsize{Размер фанфика}
+\providecommand*{\fbsize}[1]
+{\renewcommand*{\sizeBox}{#1}}				
+
+% \fbpartsNum{Количество частей (считается автоматически)}
+\providecommand*{\fbpartsNum}[1]
+{\renewcommand*{\partsNumBox}{#1}}		
+
+%% У команды \fbstatus есть один аргумент -- целое число:
+%% 1 -- в процессе;
+%% 2 -- заморожен;
+%% 3 -- завершён.
+\providecommand*{\fbstatus}[1]%
+{%
+	\renewcommand*{\statusBox}%
+	{%
+		\ifthenelse{\equal{#1}{1}}%
+		{%
+			\textcolor{red}{в процессе}%
+		}%
+		{%
+			\ifthenelse{\equal{#1}{2}}%
+			{%
+				\textcolor{blue}{заморожен}%
+			}%
+			{%
+				\ifthenelse{\equal{#1}{3}}%
+				{%
+					\textcolor[rgb]{0,0.58,0}{завершён}%
+				}%
+				{%
+					{неверный параметр}%
+				}%
+			}%
+		}%
+	}%
+}
+
+% \fbdescription{Описание}
+\providecommand{\fbdescription}[1]
+{\renewcommand{\descriptionBox}{#1}}
+
+% \fbdedication{Посвящение}
+\providecommand{\fbdedication}[1]
+{\renewcommand{\dedicationBox}{#1}}
+
+% \fbpublication{Публикация на других ресурсах}
+\providecommand{\fbpublication}[1]
+{\renewcommand{\publicationBox}{#1}}
+
+% \fbauthorsComments{Комментарии автора}
+\providecommand{\fbauthorscomments}[1]
+{\renewcommand{\authorsCommentsBox}{#1}}
+
+% =============================================
+
+\setcounter{secnumdepth}{0}	% Нумерация разделов заканчивается на уровне 0, то есть не начинается совсем.
+%\renewcommand*{\thesection}{}
+%\renewcommand*{\thesubsection}{}
+%\renewcommand*{\thesubsubsection}{}
+
+\providecommand*{\fbsection}[1]
+{\section{#1}\markright{#1}}
+
+\providecommand*{\fbsubsection}[1]
+{\subsection{#1}\markright{#1}}
+
+\providecommand*{\fbsubsubsection}[1]
+{\subsubsection{#1}}
+
+\providecommand*{\fbparagraph}[1]
+{\paragraph{#1}}
+
+\providecommand*{\fbsubparagraph}[1]
+{\subparagraph{#1}}
+% !!!!!!!!!!!!!
+% Почему не нужна эта команда?
+%\renewcommand{\sectionmark}[1]{\markright{#1}}
+
+%% Печать заголовка
+\providecommand{\fbmaketitle}
+{%
+\clearpage
+\pagestyle{empty}
+\begin{center}
+	{\huge\textbf{\titleBox}\par}
+\end  {center}%
+%
+\vspace{30pt}%
+%
+\ifthenelse{\equal{\fanlinkBox}{}}{}
+{\noindent\textbf{Ссылка на фанфик: }{\fanlinkBox}\normalfont\par}
+
+\ifthenelse{\equal{\authorsBox}{}}{}
+{\noindent\textbf{Автор: }\authorsBox%
+\ifthenelse{\equal{\authorslinkBox}{}}{}{\ (ссылка на профиль: {\authorslinkBox})}%
+\par}
+
+\ifthenelse{\equal{\translatorsBox}{}}{}
+{\noindent\textbf{Переводчик: }\translatorsBox\par}
+
+\ifthenelse{\equal{\betasBox}{}}{}
+{\noindent\textbf{Бета: }\betasBox\par}
+
+\ifthenelse{\equal{\fandomBox}{}}{}
+{\noindent\textbf{Фэндом: }\fandomBox\par}
+
+\ifthenelse{\equal{\charactersBox}{}}{}
+{\noindent\textbf{Пэйринг или персонажи: }\charactersBox\par}
+
+\ifthenelse{\equal{\ratingBox}{}}{}
+{\noindent\textbf{Рейтинг: }\ratingBox\par}
+
+\ifthenelse{\equal{\genresBox}{}}{}
+{\noindent\textbf{Жанры: }\genresBox\par}
+
+\ifthenelse{\equal{\warningsBox}{}}{}
+{\noindent\textbf{Предупреждения: }\warningsBox\par}
+
+\ifthenelse{\equal{\sizeBox}{}}{}
+{\noindent\textbf{Размер: }\sizeBox\par}
+
+\ifthenelse{\equal{\partsNumBox}{}}{}
+{\noindent\textbf{Количество частей: }\partsNumBox\par}
+
+%\ifthenelse{\equal{\statusBox}{}}{}
+{\noindent\textbf{Статус: \statusBox}\par}
+
+\ifthenelse{\equal{\descriptionBox}{}}{}
+{\noindent\textbf{Описание:}\par\descriptionBox\par}
+
+\ifthenelse{\equal{\dedicationBox}{}}{}
+{\noindent\textbf{Посвящение:}\par\dedicationBox\par}
+
+\ifthenelse{\equal{\publicationBox}{}}{}
+{\noindent\textbf{Публикация на других ресурсах:}\par\publicationBox\par}
+
+\ifthenelse{\equal{\authorsCommentsBox}{}}{}
+{\noindent\textbf{Примечания автора:}\par\authorsCommentsBox\par}
+
+\clearpage
+\tableofcontents
+\clearpage
+\pagestyle{myheadings}
+}
+
+\newenvironment{epigraph}[1][0.45]
+{\par\begin{flushright}\begin{minipage}{#1\linewidth}}{\end{minipage}\end{flushright}\par}
+\newcommand*{\epAuthor}[1]{\par\begin{flushright}\textsl{#1}\end{flushright}\par}
+
+\newenvironment{handwritten}{\par\itshape\par}{\par\normalfont\par}
+\newcommand*{\signature}[1]{\par\begin{flushright}#1\end{flushright}\par}
+
+\newenvironment{remark}{\par\vspace{15pt}\par\textbf{Примечание к части:}\par}{\par}
