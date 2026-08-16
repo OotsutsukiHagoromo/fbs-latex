@@ -1,0 +1,627 @@
+%%	Стилевой пакет LaTeX, разработанный для конвертирования фанфиков с сайта ficbook.net в формат pdf.
+%%	
+%%	(c) Rikudo_Sannin, 2016--2017
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{fbs}
+
+\global\makeatletter
+
+%\RequirePackage{xkeyval}
+
+%\newcommand*{\fb@encoding}{}
+%\DeclareOptionX{encoding}[utf8]{\renewcommand*{\fb@encoding}{#1}}
+%\ProcessOptionsX
+
+\RequirePackage[T2A]{fontenc}
+\RequirePackage[utf8]{inputenc}
+%\inputencoding{utf8}
+
+\RequirePackage[main=russian, english]{babel}
+\RequirePackage{ifthen}		% ifthenelse{<условие>}{<действия, если истинно>}{<действия, если ложно>}
+
+% =========================
+
+%\newwrite\ouf
+%\immediate\openout\ouf=test.out
+
+%\obeylines
+%\immediate\write\ouf{\fb@encoding}
+
+%\immediate\closeout\ouf
+
+% =========================
+
+\RequirePackage{soulutf8}
+
+\RequirePackage{indentfirst}
+\RequirePackage{xifthen}	% Действия над числами
+\RequirePackage{calculator}
+
+\RequirePackage{geometry}
+%\geometry{top = 3cm, bottom = 2.5cm , left = 2.5cm, right = 2.5cm}
+\geometry{margin = 0.95in, top = 1in}
+
+\RequirePackage{pscyr}
+%\renewcommand*{\rmdefault}{fha}
+%\renewcommand*{\rmdefault}{fsv}
+
+%\renewcommand*{\rmdefault}{flz}
+%\renewcommand*{\rmdefault}{fjn}
+
+
+\RequirePackage{arrayjob} % Массивы
+\RequirePackage{multido}  % Циклы
+
+\RequirePackage{color}
+
+\definecolor{toclinkcolor}{rgb}{1,0.41,0.13}%{0.92,0.5,0.4}%%{rgb}%{0.74,0.024,1.0}%{0.74,0.024,0.92}
+\definecolor{urllinkcolor}{rgb}{0,0,1}
+
+\RequirePackage{hyperref}	% Для ссылок
+\hypersetup{%
+	breaklinks=true,%
+	colorlinks=true,%
+	extension=pdf,%
+	urlcolor=urllinkcolor,%
+	linkcolor=toclinkcolor,%
+	unicode=true,%
+	draft=false,%
+	pdfpagemode={},%
+	plainpages=false,%
+	pdfpagelabels=true,%
+	linktocpage=false,%
+%	pageanchor=true%
+}
+
+\usepackage{tocloft}
+\renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill\rule{0pt}{0pt}\thispagestyle{empty}}
+\setlength{\cftbeforetoctitleskip}{0pt}
+
+% =============================================================================
+
+%\tracingmacros=1		%%%%% DEBUG
+\newcommand*{\Error}{\textsc{\textcolor{red}{Error}}}	% Отлов ошибок
+
+\newcommand*{\mal}{\makeatletter}
+\newcommand*{\mao}{\makeatother}
+
+\newlength{\fb@indent}{\value{parindent}}
+
+\newif\if@fb@existsSecondSection@
+\@fb@existsSecondSection@false		% Инициализация значением false
+
+\newif\if@fb@firstCompilation@
+\@fb@existsSecondSection@true		% Инициализация значением true
+
+\newcommand*{\edots}{\mbox{\mbox{\hphantom{\ensuremath{\ldotp}}!}\ensuremath{\ldotp\ldotp}}}
+\newcommand*{\qdots}{\mbox{\mbox{\hphantom{\ensuremath{\ldotp}}?}\ensuremath{\ldotp\ldotp}}}
+\newcommand*{\qedot}{\mbox{\mbox{\hphantom{\ensuremath{\ldotp}}?}\mbox{\hphantom{\ensuremath{\ldotp}}!}\ensuremath{\ldotp}}}
+
+% Контейнеры для текста в виде команд и массивов. Инициализация пустой строкой:
+
+\newcommand*{\fb@TitleBox}{}
+\newcommand*{\fb@FicLinkBox}{}
+%
+\newarray\fb@AuthorsBox
+\newarray\fb@AuthorsLinkBox
+\newarray\fb@TranslatorsBox
+\newarray\fb@TranslatorsLinkBox
+\newarray\fb@BetasBox
+\newarray\fb@BetasLinkBox
+\newarray\fb@PairingBox
+\newarray\fb@FandomBox
+\newarray\fb@CharactersBox
+\newarray\fb@RatingBox
+\newarray\fb@GenresBox
+\newarray\fb@WarningsBox
+%
+\newcommand*{\fb@SizeBox}{}
+\newcommand*{\fb@PartsNumBox}{}
+\newcommand*{\fb@StatusBox}{}
+%
+\newcommand{\fb@DescriptionBox}{}
+\newcommand{\fb@DedicationBox}{}
+\newcommand{\fb@PublicationBox}{}
+\newcommand{\fb@AuthorsCommentsBox}{}
+                                    
+% Колонтитулы
+\newcommand*{\fbsetpagestyle}
+{%
+	\ignorespaces%
+	\pagestyle{myheadings}%
+	%
+	\makeatletter%
+	\renewcommand*{\@oddhead}%	Односторонняя печать
+	{%
+		\raisebox{0pt}[\headheight][0pt]%	Начало блока
+		{%
+			\vbox%
+			{%
+				\hbox to \textwidth%
+				{%
+					\if@fb@existsSecondSection@
+						\normalfont\strut\thepage\hfil\slshape\leftmark\normalfont%
+					\else
+						\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
+					\fi
+					%\normalfont\strut\slshape\rightmark\normalfont\hfil\thepage%
+				}%
+				\hrule%
+			}%
+		}%
+	}%
+	%
+	\renewcommand*{\@evenhead}%	Двусторонняя печать
+	{%
+		\raisebox{0pt}[\headheight][0pt]%	Начало блока
+		{%
+			\vbox%
+			{%
+				\hbox to \textwidth%
+				{%
+					\normalfont\strut\scshape\fb@TitleBox\normalfont\hfil\thepage\normalfont%
+					%\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
+				}%
+				\hrule
+			}%
+		}%
+	}%
+	\makeatother%
+}
+
+%\mal%
+\newlength{\fb@preprint@length}
+
+\newcommand*{\fb@preprint}[2][1.5cm]%
+{%
+	\mal%
+	\settowidth{\fb@preprint@length}{#1}%
+	\par\hangindent=\fb@preprint@length\noindent{}#2%
+	\mao%
+}
+
+\newcommand*{\fb@CustomItem}[3]%
+{%
+	\mal%
+	\def\fb@CustomItem@check{\csname check#1\endcsname}%
+	%
+	\fb@CustomItem@check(1)%
+	\ifemptydata\else
+		\fb@CustomItem@check(2)%
+		\bfseries%
+		\ifemptydata
+			\def\fb@CustomItem@text{\textbf{#2:\ }}%
+		\else
+			\def\fb@CustomItem@text{\textbf{#3:\ }}%
+		\fi
+		\fb@preprint{\fb@CustomItem@text}%
+		\normalfont%
+	\fi
+	\mao%
+}
+
+\newcommand*{\fb@PrintItem}[2][, ]%	{Имя массива без '\'}[разделитель]
+{%
+	\ignorespaces%
+	\mal%
+	%
+	\def\fb@PrintItem@cnt{i#2}%
+	\def\fb@PrintItem@check{\csname check#2\endcsname}%
+	\def\fb@PrintItem@array{\csname #2\endcsname}%
+	%
+	\newcounter{\fb@PrintItem@cnt}%
+	\setcounter{\fb@PrintItem@cnt}{1}%
+	\fb@PrintItem@check(\the\value{\fb@PrintItem@cnt})%
+	\whiledo{\not\boolean{emptydata}}%
+	{%
+		\fb@PrintItem@array(\the\value{\fb@PrintItem@cnt})%
+		\stepcounter{\fb@PrintItem@cnt}%
+		\fb@PrintItem@check(\the\value{\fb@PrintItem@cnt})%
+		\ifthenelse{\not\boolean{emptydata}}{#1}{}%
+	}%
+	%
+	\mao%
+}
+
+\newcommand*{\fb@PrintItemTwo}[3][\\]%	[разделитель]{Массив имён}{Массив ссылок}
+{%
+	\ignorespaces%
+	\makeatletter%
+	%
+	\def\fb@PrintItem@count{i#2}%
+  \def\fb@PrintItem@ArrayNames@array{\csname #2\endcsname}%
+  \def\fb@PrintItem@ArrayNames@check{\csname check#2\endcsname}%
+  %
+  \def\fb@PrintItem@ArrayLinks@array{\csname #3\endcsname}%
+  \def\fb@PrintItem@ArrayLinks@check{\csname check#3\endcsname}%
+  %
+  \newcounter{\fb@PrintItem@count}%
+  \setcounter{\fb@PrintItem@count}{1}%
+	\fb@PrintItem@ArrayNames@check(\the\value{\fb@PrintItem@count})%
+	\whiledo{\not\boolean{emptydata}}%
+	{%
+		\fb@PrintItem@ArrayNames@array(\the\value{\fb@PrintItem@count})%
+		\fb@PrintItem@ArrayLinks@check(\the\value{\fb@PrintItem@count})%
+		\ifemptydata\else
+			\ (\fb@PrintItem@ArrayLinks@array(\the\value{\fb@PrintItem@count}))%
+		\fi
+		\stepcounter{\fb@PrintItem@count}%
+		\fb@PrintItem@ArrayNames@check(\the\value{\fb@PrintItem@count})%
+		\ifemptydata\else #1 \fi
+	}%
+	%
+	\makeatother%	
+}
+
+% =============================================
+
+%% Подсчёт количества страниц и частей
+\newcounter{fb@TotSections@cnt}
+\setcounter{fb@TotSections@cnt}{0}
+
+%%	Команды, исользуемые в LaTeX-документе. Например, команда
+%%		\fbtitle{Надо назвать поинтереснее}
+%%	сообщит пакету, что название фанфика --- "Надо назвать поинтереснее".
+%%	Эти команды ничего не выводят на печать --- они дают информацию для команды \maketitle (см. далее).
+
+%	\fbtitle{Название фанфика}
+\providecommand*{\fbtitle}[2]
+{\renewcommand*{\fb@TitleBox}{#1}\renewcommand*{\fb@FicLinkBox}{#2}}
+
+% \fbauthors{Имя автора(-ов) (c URL-адресами на их страницы)
+\providecommand*{\fbauthors}[2]
+{\readarray{fb@AuthorsBox}{#1}\readarray{fb@AuthorsLinkBox}{#2}}		
+
+% \fbtransl@ors{Имя переводчика(-ов)}
+\providecommand*{\fbtranslators}[2]
+{\readarray{fb@TranslatorsBox}{#1}\readarray{fb@TranslatorsLinkBox}{#2}}
+
+%\fbtransl@ors{Беты}
+\providecommand*{\fbbetas}[2]
+{\readarray{fb@BetasBox}{#1}\readarray{fb@BetasLinkBox}{#2}}
+
+% \fbfandom{фэндом(-ы)}
+\providecommand*{\fbfandom}[1]
+{\readarray{fb@FandomBox}{#1}}			
+
+% Персонажи
+\providecommand*{\fbcharacters}[1]
+{\readarray{fb@CharactersBox}{#1}}
+
+% Пейринг
+\providecommand*{\fbpairing}[1]
+{\readarray{fb@PairingBox}{#1}}
+
+% \fbr@ing{G / PG-13 / NC-17 / NC-21 / R}
+\providecommand*{\fbrating}[1]
+{\readarray{fb@RatingBox}{#1}}
+
+% \fbgenres{Жанры}
+\providecommand*{\fbgenres}[1]
+{\readarray{fb@GenresBox}{#1}}			
+
+% \fbwarnings{Предупреждения}
+\providecommand*{\fbwarnings}[1]
+{\readarray{fb@WarningsBox}{#1}}
+
+% Подсчёт страниц
+\newarray\fb@PageSuffix%
+\readarray{fb@PageSuffix}{&а&ы&ы&ы&&&&&&&&&&&&&&&&}%
+
+\providecommand*{\fbsize}[1]%
+{%
+	\makeatletter% 
+	\renewcommand*{\fb@SizeBox}%
+	{%
+		\makeatletter%
+		\@ifundefined{fb@TotPages@getNum}{}%
+		{%
+			\MODULO{\fb@TotPages@getNum}{10}{\fb@TotPages@temp}
+			\ifnum \fb@TotPages@getNum>9
+				\ifnum \fb@TotPages@getNum<20
+					\let\fb@TotPages@temp=\fb@TotPages@getNum
+				\fi
+			\fi
+			#1,\ \fb@TotPages@getNum\ страниц%
+			\ADD{\fb@TotPages@temp}{1}{\fb@TotPages@temp}%
+			\fb@PageSuffix(\fb@TotPages@temp)%
+		}%
+		\makeatother%
+	}%
+	\makeatother%
+}
+
+\renewcommand*{\fb@PartsNumBox}%
+{%
+	\makeatletter%
+	\@ifundefined{fb@TotSections@getNum}{}%
+	{%
+		\makeatletter%
+		\if@fb@existsSecondSection@ \fb@TotSections@getNum \else 1 \fi
+%		\ifnum \fb@TotSections@getNum=0 1 \else \fb@TotSections@getNum \fi%
+		\makeatother%
+	}%
+	\makeatother%
+}
+
+%% У команды \fbstatus есть один аргумент --- целое число:
+%% 1 --- в процессе;
+%% 2 --- заморожен;
+%% 3 --- завершён.
+\providecommand*{\fbstatus}[1]%
+{%
+	\renewcommand*{\fb@StatusBox}%
+	{%
+		\ifthenelse{\equal{#1}{1}}%
+		{%
+			\textcolor{red}{в~процессе}%
+		}%
+		{%
+			\ifthenelse{\equal{#1}{2}}%
+			{%
+				\textcolor{blue}{заморожен}%
+			}%
+			{%
+				\ifthenelse{\equal{#1}{3}}%
+				{%
+					\textcolor[rgb]{0,0.58,0}{завершён}%
+				}%
+				{%
+					неверный параметр%
+				}%
+			}%
+		}%
+	}%
+}
+
+% \fbdescription{Описание}
+\providecommand{\fbdescription}[1]
+{\renewcommand{\fb@DescriptionBox}{#1}}
+
+% \fbdedic@ion{Посвящение}
+\providecommand{\fbdedication}[1]
+{\renewcommand{\fb@DedicationBox}{#1}}
+
+% \fbpublic@ion{Публикация на других ресурсах}
+\providecommand{\fbpublication}[1]
+{\renewcommand{\fb@PublicationBox}{#1}}
+
+% \fbauthorsComments{Комментарии автора}
+\providecommand{\fbauthorscomments}[1]
+{\renewcommand{\fb@AuthorsCommentsBox}{#1}}
+
+% ==============================================
+
+\setcounter{secnumdepth}{0}	% Нумерация разделов заканчивается на уровне 0, то есть не начинается совсем.
+
+% !!!!!!!!!!!!!
+% Почему не нужна эта команда?
+%\renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
+
+\providecommand*{\fbsection}[1]%
+{\chapter*{#1}\addcontentsline{toc}{section}{#1}\markboth{#1}{}\stepcounter{fb@TotSections@cnt}}
+
+%\providecommand*{\fbsection}[1]
+%{\section*{#1}\addcontentsline{toc}{section}{#1}\markright{#1}\stepcounter{fb@TotSections@cnt}}%
+
+
+\providecommand*{\fbsubsection}[1]
+{\subsection*{#1}\addcontentsline{toc}{subsection}{#1}\markboth{#1}{}}
+
+\providecommand*{\fbsubsubsection}[1]
+{\subsubsection*{#1}}
+
+\providecommand*{\fbparagraph}[1]
+{\paragraph*{#1}}
+
+\providecommand*{\fbsubparagraph}[1]
+{\subparagraph*{#1}}
+
+% =================================================
+
+%% Печать заголовка
+\providecommand{\fbmaketitle}
+{%
+%	\inputencoding{utf8}
+	\makeatletter%
+	\clearpage%
+	\pagestyle{empty}%
+	\setcounter{page}{-10}
+%	\pagenumbering{empty}%
+	\rule{0pt}{0pt}%
+	\hrule%
+	\vskip 0.5in%
+	\begin{center}
+		\bfseries%
+		\huge\fb@TitleBox%
+		\ifthenelse{\equal{\fb@FicLinkBox}{}}{}%
+		{%
+			\par\large\fb@FicLinkBox%
+		}%
+	\end  {center}
+	\par%
+	\normalfont%
+	\vskip 0.5in
+	\hrule%
+	\vspace{30pt}%
+	%
+	%
+	\fb@CustomItem{fb@AuthorsBox}{Автор}{Авторы}%
+	\fb@PrintItemTwo[\\]{fb@AuthorsBox}{fb@AuthorsLinkBox}
+
+	\fb@CustomItem{fb@TranslatorsBox}{Переводчик}{Переводчики}%
+	\fb@PrintItemTwo[\\]{fb@TranslatorsBox}{fb@TranslatorsLinkBox}
+
+	\fb@CustomItem{fb@BetasBox}{Бета}{Беты}%
+	\fb@PrintItemTwo{fb@BetasBox}{fb@BetasLinkBox}
+	
+	\fb@CustomItem{fb@FandomBox}{Фэндом}{Фэндомы}%
+	\fb@PrintItem{fb@FandomBox}%
+	\checkfb@FandomBox(2)%
+	\ifthenelse{\boolean{emptydata}}{}%
+	{%
+		\ (кроссовер)%
+	}%
+	
+	\fb@CustomItem{fb@CharactersBox}{Основные персонажи}{Основные персонажи}%
+	\fb@PrintItem{fb@CharactersBox}
+
+	\fb@CustomItem{fb@PairingBox}{Пэйринг}{Пэйринг}%
+	\fb@PrintItem{fb@PairingBox}
+
+	\fb@CustomItem{fb@RatingBox}{Рейтинг}{\Error}%
+	\fb@PrintItem{fb@RatingBox}
+
+	\fb@CustomItem{fb@GenresBox}{Жанры}{Жанры}%
+	\fb@PrintItem{fb@GenresBox}
+
+	\fb@CustomItem{fb@WarningsBox}{Предупреждения}{Предупреждения}%
+	\fb@PrintItem{fb@WarningsBox}
+
+%	\ifthenelse{\equal{\fb@SizeBox}{}}{}%
+	{\noindent\textbf{Размер: }\fb@SizeBox\par}
+
+%	\ifthenelse{\equal{\PartsNumBox}{}}{}%
+	{\noindent\textbf{Количество частей: }\fb@PartsNumBox\par}
+
+	%\ifthenelse{\equal{\St@usBox}{}}{}%
+	{\noindent\textbf{Статус: \fb@StatusBox}\par}
+		
+	\ifthenelse{\equal{\fb@DescriptionBox}{}}{}%
+	{\medskip\noindent\textbf{Описание:}\par\fb@DescriptionBox\par}
+		
+	\ifthenelse{\equal{\fb@DedicationBox}{}}{}%
+	{\medskip\noindent\textbf{Посвящение:}\par\fb@DedicationBox\par}
+		
+	\ifthenelse{\equal{\fb@PublicationBox}{}}{}%
+	{\medskip\noindent\textbf{Публикация на других ресурсах:}\par\fb@PublicationBox\par}
+	
+	\ifthenelse{\equal{\fb@AuthorsCommentsBox}{}}{}%
+	{\medskip\noindent\textbf{Примечания автора:}\par\fb@AuthorsCommentsBox\par}
+
+	\clearpage%
+	\makeatletter%
+	\if@fb@firstCompilation@
+		\fb@maketoc
+	\fi
+	\if@fb@existsSecondSection@
+		% Оглавление
+		\fb@maketoc
+	\fi
+	\makeatother%	
+	\setcounter{page}{1}%
+	\fbsetpagestyle%
+	\makeatother%
+%	\inputencoding{\fb@encoding}
+}
+
+
+
+\newcommand*{\fb@maketoc}%
+{%
+	\tableofcontents
+	\clearpage
+}
+
+\newcommand*{\fbepauthorbox}{}
+\newcommand*{\fbepauthor}[1]{\renewcommand*{\fbepauthorbox}{#1}}
+\newenvironment{fbepigraph}[1]
+{%	
+	\ifthenelse{\equal{#1}{}}{}%
+	{%
+		\fbepauthor{#1}
+	}
+	\par\begin{flushright}\begin{minipage}{0.45\linewidth}%
+}%
+{%
+	\par%
+	\bigskip%
+	\hrule%
+%	\begin{flushright}\textsl{\fbepauthor}\end{flushright}%
+	\medskip%
+	\hfill%
+	\textsl{\fbepauthorbox}%
+	\end{minipage}\end{flushright}\par%
+	\renewcommand{\fbepauthor}[1]{}%
+}
+
+\newcommand*{\fbsignaturebox}{}
+\newcommand{\fbsignature}[1]{\renewcommand*{\fbsignaturebox}{#1}}
+\newenvironment{fbhandwritten}
+{%
+	\par\itshape\par%
+}
+{%
+	\par\noindent%
+	\hspace*{\fill}\fbsignaturebox%
+	\par\normalfont%
+}
+
+\newenvironment{fbremark}%
+{%
+	\par%
+	\bigskip%
+	\par\noindent%
+	\textbf{Примечание к части.}%
+	\par\indent%
+	\makeatletter%
+	\hangindent=\fb@indent%
+	\makeatother%
+}%
+{%
+	\par%
+}
+
+% \usefont{ENC}{family}{series}{shape}
+% \selectfont
+\newenvironment{fbitalic}%
+{%
+	\normalfont\itshape
+}%
+{%
+	
+}
+
+\newenvironment{fbbold}%
+{%
+	\normalfont\bfseries
+}%
+{%
+	\normalfont
+}
+
+\newenvironment{fbupright}%
+{%
+	\normalfont\rmfamily
+}%
+{%
+	\normalfont
+}
+
+\AtEndDocument%
+{%
+	\makeatletter%
+	\immediate\write\@mainaux%
+	{%
+		\string\gdef\string\fb@TotPages@getNum{\number\value{page}}
+		\string\gdef\string\fb@TotSections@getNum{\number\value{fb@TotSections@cnt}}
+		\ifnum \number\value{fb@TotSections@cnt}>0%
+			\string\global\string\@fb@existsSecondSection@true
+		\else
+			\string\global\string\@fb@existsSecondSection@false
+		\fi
+		\string\global\string\@fb@firstCompilation@false
+	}
+	\makeatother%
+}
+
+%\ifthenelse{\equal{\fb@encoding}{utf8}}{}%
+%{%
+%	\RequirePackage{soul}
+%}%
+
+%\inputencoding{\fb@encoding}
+
+\global\makeatother
