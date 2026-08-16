@@ -1,3 +1,4 @@
+
 %%	Стилевой пакет LaTeX, разработанный для конвертирования фанфиков с сайта ficbook.net в формат pdf.
 %%	
 %%	(c) Rikudo_Sannin, 2016--2017
@@ -10,24 +11,32 @@
 
 \RequirePackage{xkeyval}
 
-\DeclareOptionX{encoding}[utf8]{}
-
-%	\define@cmdkey{setup}[fb]{encoding}[utf8]{#1}		% \fb@encoding
-
-%\let\@tempa\@empty%
-%\edef\@tempa{\@ptionlist{\@currname.\@currext}}%
-%\@for\CurrentOption:=\@classoptionslist\do{%
-%  \@ifundefined{fb@#2@\CurrentOption}{}{\edef\@tempa{\@tempa,\CurrentOption,}}}%
-%\edef\@tempa{\noexpand\setkeys{setup}{\@tempa}}%
-%\@tempa%
-%\AtEndOfPackage{\let\@unprocessedoptions\relax}%
+\newcommand*{\fb@encoding}{}
+\DeclareOptionX{encoding}[utf8]{\renewcommand*{\fb@encoding}{#1}}
+\ProcessOptionsX
 
 \RequirePackage[T2A]{fontenc}
-\RequirePackage[utf8]{inputenc}
+\RequirePackage{inputenc}
+\inputencoding{utf8}
+
 \RequirePackage[russian]{babel}
-\RequirePackage{soulutf8}
-\RequirePackage{indentfirst}
 \RequirePackage{ifthen}		% ifthenelse{<условие>}{<действия, если истинно>}{<действия, если ложно>}
+
+% =========================
+
+%\newwrite\ouf
+%\immediate\openout\ouf=test.out
+
+%\obeylines
+%\immediate\write\ouf{\fb@encoding}
+
+%\immediate\closeout\ouf
+
+% =========================
+
+\RequirePackage{soulutf8}
+
+\RequirePackage{indentfirst}
 \RequirePackage{xifthen}	% Действия над числами
 \RequirePackage{calculator}
 
@@ -415,6 +424,7 @@
 %% Печать заголовка
 \providecommand{\fbmaketitle}
 {%
+%	\inputencoding{utf8}
 	\makeatletter%
 	\clearpage%
 	\pagestyle{empty}%
@@ -508,6 +518,7 @@
 	\setcounter{page}{1}%
 	\setpagestyle%
 	\makeatother%
+%	\inputencoding{\fb@encoding}
 }
 
 
@@ -580,5 +591,12 @@
 
 	\makeatother%
 }
+
+%\ifthenelse{\equal{\fb@encoding}{utf8}}{}%
+%{%
+%	\RequirePackage{soul}
+%}%
+
+%\inputencoding{\fb@encoding}
 
 \global\makeatother
