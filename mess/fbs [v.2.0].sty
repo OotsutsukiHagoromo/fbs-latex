@@ -1,42 +1,15 @@
-
 %%	Стилевой пакет LaTeX, разработанный для конвертирования фанфиков с сайта ficbook.net в формат pdf.
 %%	
 %%	(c) Rikudo_Sannin, 2016--2017
 
-\NeedsTeXFormat{LaTeX2e}
-
 \ProvidesPackage{fbs}
 
-\global\makeatletter
-
-\RequirePackage{xkeyval}
-
-\newcommand*{\fb@encoding}{}
-\DeclareOptionX{encoding}[utf8]{\renewcommand*{\fb@encoding}{#1}}
-\ProcessOptionsX
-
 \RequirePackage[T2A]{fontenc}
-\RequirePackage{inputenc}
-\inputencoding{utf8}
-
+\RequirePackage[utf8]{inputenc}
 \RequirePackage[russian]{babel}
-\RequirePackage{ifthen}		% ifthenelse{<условие>}{<действия, если истинно>}{<действия, если ложно>}
-
-% =========================
-
-%\newwrite\ouf
-%\immediate\openout\ouf=test.out
-
-%\obeylines
-%\immediate\write\ouf{\fb@encoding}
-
-%\immediate\closeout\ouf
-
-% =========================
-
 \RequirePackage{soulutf8}
-
 \RequirePackage{indentfirst}
+\RequirePackage{ifthen}		% ifthenelse{<условие>}{<действия, если истинно>}{<действия, если ложно>}
 \RequirePackage{xifthen}	% Действия над числами
 \RequirePackage{calculator}
 
@@ -45,17 +18,13 @@
 \geometry{margin = 0.95in, top = 1in}
 
 \RequirePackage{pscyr}
-%\renewcommand*{\rmdefault}{fsv}
-%\renewcommand*{\rmdefault}{fha}
-%\renewcommand*{\rmdefault}{flz}
-
 
 \RequirePackage{arrayjob} % Массивы
 \RequirePackage{multido}  % Циклы
 
 \RequirePackage{color}
 
-\definecolor{toclinkcolor}{rgb}{1,0.41,0.13}%{0.92,0.5,0.4}%%{rgb}%{0.74,0.024,1.0}%{0.74,0.024,0.92}
+\definecolor{toclinkcolor}{rgb}{0.74,0.024,1.0}%{0.74,0.024,0.92}
 \definecolor{urllinkcolor}{rgb}{0,0,1}
 
 \RequirePackage{hyperref}	% Для ссылок
@@ -69,17 +38,14 @@
 	draft=false,%
 	pdfpagemode={},%
 	plainpages=false,%
-	pdfpagelabels=true,%
-	linktocpage=false,%
-%	pageanchor=true%
+	pdfpagelabels=true%
 }
 
 \usepackage{tocloft}
-\renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}
-\renewcommand{\cftaftertoctitle}{\hfill\rule{0pt}{0pt}\thispagestyle{empty}}
-\setlength{\cftbeforetoctitleskip}{0pt}
+\renewcommand{\cftaftertoctitle}{\thispagestyle{empty}}
 
-% =============================================================================
+
+\global\makeatletter
 
 %\tracingmacros=1		%%%%% DEBUG
 \newcommand*{\Error}{\textsc{\textcolor{red}{Error}}}	% Отлов ошибок
@@ -142,7 +108,7 @@
 				\hbox to \textwidth%
 				{%
 					\if@fb@existsSecondSection@
-						\normalfont\strut\thepage\hfil\slshape\leftmark\normalfont%
+						\normalfont\strut\thepage\hfil\slshape\rightmark\normalfont%
 					\else
 						\normalfont\strut\thepage\hfil\scshape\fb@TitleBox\normalfont%
 					\fi
@@ -394,21 +360,21 @@
 
 % ==============================================
 
-\setcounter{secnumdepth}{0}	% Нумерация разделов заканчивается на уровне 0, то есть не начинается совсем.
+%	\setcounter{secnumdepth}{0}	% Нумерация разделов заканчивается на уровне 0, то есть не начинается совсем.
 
 % !!!!!!!!!!!!!
 % Почему не нужна эта команда?
-%\renewcommand{\chaptermark}[1]{\markboth{#1}{#1}}
+%\renewcommand{\sectionmark}[1]{\markboth{#1}{#1}}
 
 \providecommand*{\fbsection}[1]%
-{\chapter*{#1}\addcontentsline{toc}{section}{#1}\markboth{#1}{}\stepcounter{fb@TotSections@cnt}}
+{\chapter*{#1}\addcontentsline{toc}{section}{#1}\markright{#1}\stepcounter{fb@TotSections@cnt}}
 
 %\providecommand*{\fbsection}[1]
 %{\section*{#1}\addcontentsline{toc}{section}{#1}\markright{#1}\stepcounter{fb@TotSections@cnt}}%
 
 
 \providecommand*{\fbsubsection}[1]
-{\subsection*{#1}\addcontentsline{toc}{subsection}{#1}\markboth{#1}{}}
+{\subsection*{#1}\addcontentsline{toc}{subsection}{#1}\markright{#1}}
 
 \providecommand*{\fbsubsubsection}[1]
 {\subsubsection*{#1}}
@@ -424,7 +390,6 @@
 %% Печать заголовка
 \providecommand{\fbmaketitle}
 {%
-%	\inputencoding{utf8}
 	\makeatletter%
 	\clearpage%
 	\pagestyle{empty}%
@@ -433,14 +398,14 @@
 	\rule{0pt}{0pt}%
 	\hrule%
 	\vskip 0.5in%
-	\begin{center}
+	{\centering
 		\bfseries%
 		\huge\fb@TitleBox%
 		\ifthenelse{\equal{\fb@FicLinkBox}{}}{}%
 		{%
 			\par\large\fb@FicLinkBox%
 		}%
-	\end  {center}
+	}
 	\par%
 	\normalfont%
 	\vskip 0.5in
@@ -508,17 +473,16 @@
 	\clearpage%
 	\makeatletter%
 	\if@fb@firstCompilation@
-		\fb@maketoc
+		FC\fb@maketoc
 	\fi
 	\if@fb@existsSecondSection@
 		% Оглавление
-		\fb@maketoc
+		SS\fb@maketoc
 	\fi
 	\makeatother%	
 	\setcounter{page}{1}%
 	\setpagestyle%
 	\makeatother%
-%	\inputencoding{\fb@encoding}
 }
 
 
@@ -591,12 +555,5 @@
 
 	\makeatother%
 }
-
-%\ifthenelse{\equal{\fb@encoding}{utf8}}{}%
-%{%
-%	\RequirePackage{soul}
-%}%
-
-%\inputencoding{\fb@encoding}
 
 \global\makeatother
