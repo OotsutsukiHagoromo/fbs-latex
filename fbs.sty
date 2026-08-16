@@ -42,7 +42,7 @@
 %\geometry{top = 3cm, bottom = 2.5cm , left = 2.5cm, right = 2.5cm}
 \geometry{margin = 0.95in, top = 1in}
 
-\RequirePackage{pscyr}
+%\RequirePackage{pscyr}
 %\renewcommand*{\rmdefault}{fha}
 %\renewcommand*{\rmdefault}{fsv}
 
@@ -75,9 +75,7 @@
 }
 
 \usepackage{tocloft}
-\renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}
-\renewcommand{\cftaftertoctitle}{\hfill\rule{0pt}{0pt}\thispagestyle{empty}}
-\setlength{\cftbeforetoctitleskip}{0pt}
+
 
 % =============================================================================
 
@@ -125,10 +123,19 @@
 \newcommand{\fb@DedicationBox}{}
 \newcommand{\fb@PublicationBox}{}
 \newcommand{\fb@AuthorsCommentsBox}{}
-                                    
+
+%% Подсчёт количества страниц и частей
+	\newcounter{fb@TotSections@cnt}
+	\setcounter{fb@TotSections@cnt}{0}
+
 % Колонтитулы
-\newcommand*{\fbsetpagestyle}
+\newcommand*{\fb@setpagestyle}
 {%
+	% Оглавление
+	\renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}%
+	\renewcommand{\cftaftertoctitle}{\hfill\rule{0pt}{0pt}\thispagestyle{empty}}%
+	\setlength{\cftbeforetoctitleskip}{0pt}%
+	%
 	\ignorespaces%
 	\pagestyle{myheadings}%
 	%
@@ -256,10 +263,6 @@
 }
 
 % =============================================
-
-%% Подсчёт количества страниц и частей
-\newcounter{fb@TotSections@cnt}
-\setcounter{fb@TotSections@cnt}{0}
 
 %%	Команды, исользуемые в LaTeX-документе. Например, команда
 %%		\fbtitle{Надо назвать поинтереснее}
@@ -503,6 +506,7 @@
 
 	\clearpage%
 	\makeatletter%
+	\fb@setpagestyle%
 	\if@fb@firstCompilation@
 		\fb@maketoc
 	\fi
@@ -512,12 +516,9 @@
 	\fi
 	\makeatother%	
 	\setcounter{page}{1}%
-	\fbsetpagestyle%
 	\makeatother%
 %	\inputencoding{\fb@encoding}
 }
-
-
 
 \newcommand*{\fb@maketoc}%
 {%
