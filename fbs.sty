@@ -3,38 +3,31 @@
 %%	(c) Rikudo_Sannin, 2016--2017
 
 \NeedsTeXFormat{LaTeX2e}
+
 \ProvidesPackage{fbs}
 
 \global\makeatletter
 
-%\RequirePackage{xkeyval}
+\RequirePackage{xkeyval}
 
-%\newcommand*{\fb@encoding}{}
-%\DeclareOptionX{encoding}[utf8]{\renewcommand*{\fb@encoding}{#1}}
-%\ProcessOptionsX
+\DeclareOptionX{encoding}[utf8]{}
+
+%	\define@cmdkey{setup}[fb]{encoding}[utf8]{#1}		% \fb@encoding
+
+%\let\@tempa\@empty%
+%\edef\@tempa{\@ptionlist{\@currname.\@currext}}%
+%\@for\CurrentOption:=\@classoptionslist\do{%
+%  \@ifundefined{fb@#2@\CurrentOption}{}{\edef\@tempa{\@tempa,\CurrentOption,}}}%
+%\edef\@tempa{\noexpand\setkeys{setup}{\@tempa}}%
+%\@tempa%
+%\AtEndOfPackage{\let\@unprocessedoptions\relax}%
 
 \RequirePackage[T2A]{fontenc}
 \RequirePackage[utf8]{inputenc}
-%\inputencoding{utf8}
-
-\RequirePackage[main=russian, english]{babel}
-\RequirePackage{ifthen}		% ifthenelse{<условие>}{<действия, если истинно>}{<действия, если ложно>}
-
-% =========================
-
-%\newwrite\ouf
-%\immediate\openout\ouf=test.out
-
-%\obeylines
-%\immediate\write\ouf{\fb@encoding}
-
-%\immediate\closeout\ouf
-
-% =========================
-
+\RequirePackage[russian]{babel}
 \RequirePackage{soulutf8}
-
 \RequirePackage{indentfirst}
+\RequirePackage{ifthen}		% ifthenelse{<условие>}{<действия, если истинно>}{<действия, если ложно>}
 \RequirePackage{xifthen}	% Действия над числами
 \RequirePackage{calculator}
 
@@ -43,11 +36,9 @@
 \geometry{margin = 0.95in, top = 1in}
 
 \RequirePackage{pscyr}
-%\renewcommand*{\rmdefault}{fha}
 %\renewcommand*{\rmdefault}{fsv}
-
+%\renewcommand*{\rmdefault}{fha}
 %\renewcommand*{\rmdefault}{flz}
-%\renewcommand*{\rmdefault}{fjn}
 
 
 \RequirePackage{arrayjob} % Массивы
@@ -127,7 +118,7 @@
 \newcommand{\fb@AuthorsCommentsBox}{}
                                     
 % Колонтитулы
-\newcommand*{\fbsetpagestyle}
+\newcommand*{\setpagestyle}
 {%
 	\ignorespaces%
 	\pagestyle{myheadings}%
@@ -424,7 +415,6 @@
 %% Печать заголовка
 \providecommand{\fbmaketitle}
 {%
-%	\inputencoding{utf8}
 	\makeatletter%
 	\clearpage%
 	\pagestyle{empty}%
@@ -461,6 +451,7 @@
 	
 	\fb@CustomItem{fb@FandomBox}{Фэндом}{Фэндомы}%
 	\fb@PrintItem{fb@FandomBox}%
+
 	\checkfb@FandomBox(2)%
 	\ifthenelse{\boolean{emptydata}}{}%
 	{%
@@ -515,9 +506,8 @@
 	\fi
 	\makeatother%	
 	\setcounter{page}{1}%
-	\fbsetpagestyle%
+	\setpagestyle%
 	\makeatother%
-%	\inputencoding{\fb@encoding}
 }
 
 
@@ -528,37 +518,33 @@
 	\clearpage
 }
 
-\newcommand*{\fbepauthorbox}{}
-\newcommand*{\fbepauthor}[1]{\renewcommand*{\fbepauthorbox}{#1}}
+\newcommand{\fbepauthor}{}
 \newenvironment{fbepigraph}[1]
-{%	
-	\ifthenelse{\equal{#1}{}}{}%
-	{%
-		\fbepauthor{#1}
-	}
+{%
+	\renewcommand{\fbepauthor}{#1}%
 	\par\begin{flushright}\begin{minipage}{0.45\linewidth}%
 }%
 {%
 	\par%
-	\bigskip%
-	\hrule%
-%	\begin{flushright}\textsl{\fbepauthor}\end{flushright}%
-	\medskip%
-	\hfill%
-	\textsl{\fbepauthorbox}%
+	\ifthenelse{\equal{\fbepauthor}{}}{}%
+	{%
+		\bigskip%
+	  \hrule%
+%		\begin{flushright}\textsl{\fbepauthor}\end{flushright}%
+		\medskip%
+	  \hfill%
+		\textsl{\fbepauthor}%
+	}%
 	\end{minipage}\end{flushright}\par%
-	\renewcommand{\fbepauthor}[1]{}%
+	\renewcommand{\fbepauthor}{}%
 }
 
-\newcommand*{\fbsignaturebox}{}
-\newcommand{\fbsignature}[1]{\renewcommand*{\fbsignaturebox}{#1}}
+\newcommand{\fbsignature}[1]{\par\noindent\hfill#1\par}
 \newenvironment{fbhandwritten}
 {%
 	\par\itshape\par%
 }
 {%
-	\par\noindent%
-	\hspace*{\fill}\fbsignaturebox%
 	\par\normalfont%
 }
 
@@ -577,32 +563,6 @@
 	\par%
 }
 
-% \usefont{ENC}{family}{series}{shape}
-% \selectfont
-\newenvironment{fbitalic}%
-{%
-	\normalfont\itshape
-}%
-{%
-	
-}
-
-\newenvironment{fbbold}%
-{%
-	\normalfont\bfseries
-}%
-{%
-	\normalfont
-}
-
-\newenvironment{fbupright}%
-{%
-	\normalfont\rmfamily
-}%
-{%
-	\normalfont
-}
-
 \AtEndDocument%
 {%
 	\makeatletter%
@@ -617,14 +577,8 @@
 		\fi
 		\string\global\string\@fb@firstCompilation@false
 	}
+
 	\makeatother%
 }
-
-%\ifthenelse{\equal{\fb@encoding}{utf8}}{}%
-%{%
-%	\RequirePackage{soul}
-%}%
-
-%\inputencoding{\fb@encoding}
 
 \global\makeatother
