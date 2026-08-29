@@ -131,9 +131,9 @@
 \RequirePackage[utf8]{inputenc}
 \inputencoding{utf8}
 
-\RequirePackage[main = russian, english, francais, dutch]{babel}
+\RequirePackage[main = russian, english]{babel}
 % \texten, \textru, ...
-\babeltags{en = english, ru = russian, fr = francais, de = dutch}
+\babeltags{en=english, ru=russian, fr=francais, de=dutch}
 
 % =============================================================================
 
