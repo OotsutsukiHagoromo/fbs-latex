@@ -135,7 +135,10 @@
 % \texten, \textru, ...
 \babeltags{en=english, ru=russian, fr=francais, de=dutch}
 
+
 % =============================================================================
+
+\RequirePackage{import}
 
 % \usepackage{fontspec}
 % 	\setmainfont{DejaVu Serif}
