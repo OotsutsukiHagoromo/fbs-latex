@@ -1804,14 +1804,19 @@
 	\fi
 }
 
+\newlength{\fbspublicationdateraiselength}
+\setlength{\fbspublicationdateraiselength}{1ex}
+
 \newcommand*{\fbspublicationdate}[1]{%
 	\par
-	\begingroup
-		\itshape
-		Опубликовано #1%
-		\par
-		\addvspace{1\baselineskip}%
-	\endgroup
+	\raisebox{\fbspublicationdateraiselength}[0pt][0pt]{%
+		\hbox{%
+			\itshape
+			Опубликовано #1%
+		}%
+	}%
+	\par
+	\addvspace{1.5\fbspublicationdateraiselength}%
 }
 
 \makeatother
