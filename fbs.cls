@@ -1808,7 +1808,7 @@
 	\par
 	\begingroup
 		\itshape
-		#1%
+		Опубликовано #1%
 		\par
 		\addvspace{1\baselineskip}%
 	\endgroup
