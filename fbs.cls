@@ -1801,6 +1801,16 @@
 	\fi
 }
 
+\newcommand*{\fbspublicationdate}[1]{%
+	\par
+	\begingroup
+		\itshape
+		#1%
+		\par
+		\addvspace{1\baselineskip}%
+	\endgroup
+}
+
 \makeatother
 
 % vim:ts=2:sw=2:nolist
