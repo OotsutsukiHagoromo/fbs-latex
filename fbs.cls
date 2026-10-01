@@ -1821,4 +1821,8 @@
 
 \makeatother
 
+\newcommand*{\teng}[1]{%
+	\texten{#1}%
+}
+
 % vim:ts=2:sw=2:nolist
