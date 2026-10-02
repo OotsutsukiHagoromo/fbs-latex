@@ -344,6 +344,8 @@
 \RequirePackage[shortlabels]{enumitem}
 % \RequirePackage[np]{numprint}
 
+\RequirePackage{longtable}
+
 % ================================== Errors ===================================
 
 % Отлов ошибок
