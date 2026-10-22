@@ -243,7 +243,7 @@
 	% \renewcommand*{\rmdefault}{ftm}
 	% \renewcommand*{\ttdefault}{\sfdefault}
 \else
-	\RequirePackage[libertinus, varbb, varg]{newtx}
+	\RequirePackage[libertinus, vvarbb, varg]{newtx}
 	\AtBeginDocument{%
 		\DeclareFontFamilySubstitution{T2A}{\scdefault}{Tempora-TLF}%
 	}
