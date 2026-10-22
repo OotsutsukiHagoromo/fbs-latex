@@ -298,6 +298,8 @@
 \definecolor{CornellRed}  {HTML}{bd1e1e}
 \definecolor{CaribbeanCurrent}{HTML}{3C6E71}
 
+\definecolor{mycitecolor}{HTML}{008938}
+
 % https://coolors.co/eaebed-420039-d72638-ff570a-007090
 
 \colorlet{myurlcolor}{PennBlue}
@@ -314,6 +316,7 @@
 	extension=pdf,%
 	urlcolor=myurlcolor,%
 	linkcolor=mylinkcolor,%
+	citecolor=mycitecolor,
 	unicode=true,%
 	draft=false,%
 	pdfpagemode={},%
