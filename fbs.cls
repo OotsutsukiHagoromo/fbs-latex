@@ -1359,6 +1359,7 @@
 % \setlength{\fbsepigraphwidth}{0.45\linewidth}
 % \setlength{\fbsepigraphwidth}{0.5\linewidth}
 \setlength{\fbsepigraphwidth}{0.6\linewidth}
+
 \newenvironment{fbsepigraph}[1]
 {%	
 	\ifthenelse{\equal{#1}{}}{}%
@@ -1368,21 +1369,21 @@
 	\par\begin{flushright}%
 		\begin{minipage}{\fbsepigraphwidth}%
 }{%
+		\par%
+		\addpenalty{10000}%
+		\addvspace{\bigskipamount}%
+		\addpenalty{10000}%
+		\hrule%
+		\addpenalty{10000}%
+		\addvspace{\medskipamount}%
+		\addpenalty{10000}%
+		\hfill%
+		\textsl{\fbsepauthorbox}%
+		\end{minipage}%
+	\end{flushright}%
 	\par%
-	\addpenalty{10000}%
-	\addvspace{\bigskipamount}%
-	\addpenalty{10000}%
-	\hrule%
-%	\begin{flushright}\textsl{\fbsepauthor}\end{flushright}%
-	\addpenalty{10000}%
-	\addvspace{\medskipamount}%
-	\addpenalty{10000}%
-	\hfill%
-	\textsl{\fbsepauthorbox}%
-	\end{minipage}\end{flushright}\par%
 	\renewcommand{\fbsepauthor}[1]{}%
 }
-
 
 \newcommand*{\fbssignaturebox}{}
 \newcommand{\fbssignature}[1]{\renewcommand*{\fbssignaturebox}{#1}}
