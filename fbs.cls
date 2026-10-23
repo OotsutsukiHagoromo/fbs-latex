@@ -1372,16 +1372,16 @@
 	\par\begin{flushright}%
 		\begin{minipage}{\fbsepigraphwidth}%
 }{%
-		\par%
-		\addpenalty{10000}%
-		\addvspace{\bigskipamount}%
-		\addpenalty{10000}%
-		\hrule%
-		\addpenalty{10000}%
-		\addvspace{\medskipamount}%
-		\addpenalty{10000}%
-		\hfill%
-		\textsl{\fbsepauthorbox}%
+			\par%
+			\addpenalty{10000}%
+			\addvspace{\bigskipamount}%
+			\addpenalty{10000}%
+			\hrule%
+			\addpenalty{10000}%
+			\addvspace{\medskipamount}%
+			\addpenalty{10000}%
+			\hfill%
+			\textsl{\fbsepauthorbox}%
 		\end{minipage}%
 	\end{flushright}%
 	\par%
